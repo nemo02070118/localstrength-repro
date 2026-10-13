@@ -769,6 +769,27 @@ when re-estimated repeatedly in real time. Finally, the deflated Sharpe ratio of
 \citet{BaileyLopezdePrado2014}, which haircuts for the multiplicity of venues
 tried, leaves the gain comfortably significant.
 
+\paragraph{Is it just a small-cap tilt in disguise?} Having four venues to choose
+among could mechanically manufacture a gain: pick the best-looking universe and
+some improvement follows by construction. A placebo settles this. Assigning each
+discard a \emph{random} venue rather than its estimated home, over $1{,}000$
+draws, yields a mean out-of-sample gain of $+0.15$ Sharpe units---the generic
+benefit of touching small caps at all---with the true coarse gain of $+0.45$
+sitting $3.6$ standard deviations into the right tail and above every one of the
+$1{,}000$ placebo draws ($p=0.000$). Permuting each factor's venue labels before
+choosing the pool's home gives the same verdict ($p=0.000$). The gain is the
+venue \emph{decision}, not the luxury of averaging over universes.
+
+\paragraph{Does it survive a modern false-discovery screen?} The headline uses a
+fixed $|t|<1.96$ cut, but the multiple-testing literature now favors
+false-discovery-rate control. Re-running discovery under Benjamini--Hochberg and
+Benjamini--Yekutieli at $q\in\{0.05,0.10\}$ enlarges the discard set to between
+$103$ and $119$ factors and \emph{raises} the coarse gain to between $+0.46$ and
+$+0.49$ Sharpe units. A smarter, stricter screen does not rescue the discarded
+factors---it condemns more of them, and the reallocation revives the larger pool
+just as well. This is Proposition~\ref{prop:hurdle} in the data: tightening the
+hurdle discards more local strength, not less.
+
 \paragraph{Is it worth anything to an investor?} Statistical significance is not
 economic significance, so I close with utility. For a mean-variance investor the
 certainty-equivalent gain of holding the coarse book over the grave book is about
@@ -781,8 +802,9 @@ rejected at $F(8,594)=5.7$ ($p<0.0001$). Figure~\ref{fig:cergrs} displays the
 utility gain and the joint test. The reallocation gain is real on every
 dimension a referee can name: it survives costs, it does not depend on the split,
 it holds under embargo and walk-forward re-estimation, it clears the deflated
-Sharpe hurdle, it is jointly significant across families, and it is worth real
-money.
+Sharpe hurdle, it beats a random-venue placebo by $3.6$ standard deviations, it
+strengthens under false-discovery-rate screens, it is jointly significant across
+families, and it is worth real money.
 
 \begin{figure}[t]
 \centering

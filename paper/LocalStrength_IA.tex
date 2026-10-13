@@ -558,6 +558,55 @@ bootstrap $p_{>0}=1.000$ throughout. Source:
 \end{threeparttable}
 \end{table}
 
+\subsection{Placebo: the gain is the venue decision}
+
+A gain could in principle be manufactured by the mere availability of four
+venues to average over. Two placebos rule this out. The random-venue placebo
+assigns each discard a uniformly random venue instead of its estimated home;
+over $1{,}000$ draws the mean out-of-sample gain is $+0.145$ Sharpe units with
+standard deviation $0.086$---the generic effect of touching small caps. The true
+coarse gain of $+0.454$ lies $3.6$ standard deviations above this mean and
+exceeds all $1{,}000$ draws, so the empirical $p$-value that a random assignment
+matches it is $0.000$. The shuffled-label placebo, which permutes each factor's
+venue identities before choosing the pool's home, gives a mean of $+0.142$ and
+the same $p=0.000$. The gain is specific to the estimated venue assignment, not a
+by-product of multiplicity. Source: \texttt{cn\_placebo\_fdr.json}.
+
+\subsection{The conclusion survives false-discovery-rate screens}
+
+The headline uses a fixed $|t|<1.96$ cut. Table~\ref{tab:iafdr} re-runs discovery
+under the Benjamini--Hochberg and Benjamini--Yekutieli false-discovery-rate
+procedures at $q\in\{0.05,0.10\}$, applied to the train-half large-cap
+$t$-statistics. Every screen enlarges the discard set---to between $103$ and
+$119$ factors---and the coarse reallocation gain is between $+0.46$ and $+0.49$
+Sharpe units, above the $+0.45$ of the baseline cut. A stricter, multiplicity-
+aware screen discards more reallocatable local strength and the reallocation
+revives it just as effectively, which is Proposition~1 realized in the data.
+
+\begin{table}[t]
+\centering
+\caption{Reallocation under false-discovery-rate screens}
+\label{tab:iafdr}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+Screen & $N$ disc & SR grave & SR coarse & Gain \\
+\midrule
+BH $q=0.05$ & 112 & 0.96 & 1.44 & $+0.48$ \\
+BH $q=0.10$ & 103 & 0.86 & 1.35 & $+0.49$ \\
+BY $q=0.05$ & 119 & 1.02 & 1.48 & $+0.46$ \\
+BY $q=0.10$ & 116 & 1.00 & 1.47 & $+0.48$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Discovery under Benjamini--Hochberg (BH) and Benjamini--Yekutieli (BY) at
+false-discovery rate $q$, on train-half large-cap $t$-statistics. Home venue is
+the equal-weighted small-cap universe in every case. Source:
+\texttt{cn\_placebo\_fdr.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
 \subsection{Split year, embargo, walk-forward, and costs}
 
 Table~\ref{tab:iasplit} collects the out-of-sample disciplines discussed in

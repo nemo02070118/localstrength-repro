@@ -69,3 +69,16 @@ print(f"positive hindsight gain: {sp['n_positive_hindsight_gain']}/{sp['n_disc']
 print(f"top-10 share of total gain = {sp['top10_share_of_gain']*100:.0f}%")
 print(f"venue hit rate (train-best = test-best) = {sp['venue_hit_rate_train_test']*100:.0f}% "
       f"(random baseline {sp['random_guess_baseline']*100:.0f}%)")
+
+pf = L('cn_placebo_fdr.json')
+print()
+print("=" * 60)
+print("LEDGER E -- PLACEBO + FDR (referee robustness)")
+print("=" * 60)
+pr = pf['placebo_random_venue']
+print(f"random-venue placebo: mean gain {pr['mean_gain']:+.3f}  true {pr['true_gain']:+.3f}  "
+      f"z={pr['z_true_vs_placebo']:+.2f}  p(placebo>=true)={pr['emp_p_true_ge_placebo']:.3f}")
+print(f"shuffled-labels placebo: p(placebo>=true)="
+      f"{pf['placebo_shuffled_labels']['emp_p_true_ge_placebo']:.3f}")
+for k, v in pf['fdr_screens'].items():
+    print(f"  {k:10s}: N={v['n_disc']:>3}  gain={v['gain']:+.3f}")

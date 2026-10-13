@@ -1,0 +1,53 @@
+{
+  "n_disc": 94,
+  "coarse_venue": "wide",
+  "sr_grave": 0.8486948902988832,
+  "sr_coarse": 1.302433790399738,
+  "true_coarse_gain": 0.4537389001008548,
+  "placebo_random_venue": {
+    "n_draws": 1000,
+    "mean_gain": 0.14487494393338976,
+    "sd_gain": 0.08607420413304595,
+    "p95_gain": 0.29011438009822127,
+    "true_gain": 0.4537389001008548,
+    "emp_p_true_ge_placebo": 0.0,
+    "z_true_vs_placebo": 3.5883451874855594
+  },
+  "placebo_shuffled_labels": {
+    "n_draws": 1000,
+    "mean_gain": 0.14177264506283066,
+    "sd_gain": 0.08546534574357453,
+    "true_gain": 0.4537389001008548,
+    "emp_p_true_ge_placebo": 0.0
+  },
+  "fdr_screens": {
+    "bh_q0.05": {
+      "n_disc": 112,
+      "coarse_venue": "wide",
+      "sr_grave": 0.9589531605290004,
+      "sr_coarse": 1.44303016827476,
+      "gain": 0.48407700774575957
+    },
+    "bh_q0.1": {
+      "n_disc": 103,
+      "coarse_venue": "wide",
+      "sr_grave": 0.8546981204258993,
+      "sr_coarse": 1.346316242530385,
+      "gain": 0.49161812210448563
+    },
+    "by_q0.05": {
+      "n_disc": 119,
+      "coarse_venue": "wide",
+      "sr_grave": 1.0190069834676956,
+      "sr_coarse": 1.482165285000995,
+      "gain": 0.4631583015332994
+    },
+    "by_q0.1": {
+      "n_disc": 116,
+      "coarse_venue": "wide",
+      "sr_grave": 0.9961499661651873,
+      "sr_coarse": 1.4730559325700119,
+      "gain": 0.47690596640482463
+    }
+  }
+}

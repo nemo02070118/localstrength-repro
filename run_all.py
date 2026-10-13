@@ -28,6 +28,7 @@ ORDER = [
     "cn_capacity.py",
     "cn_exhibits.py",
     "cn_sparsity.py",
+    "cn_placebo_fdr.py",
 ]
 
 
