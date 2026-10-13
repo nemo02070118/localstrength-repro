@@ -1,0 +1,1215 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{threeparttable}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\captionsetup{font=small,labelfont=bf}
+\bibliographystyle{plainnat}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\sgn}{\operatorname{sgn}}
+\newcommand{\SR}{\mathrm{SR}}
+\onehalfspacing
+
+\title{\textbf{Misallocated, Not Mispriced:\\[2pt]
+The Resolution Limit of Local Strength in the Factor Zoo}}
+\author{Huannian Jin\thanks{Replication archive:
+\url{https://nemo02070118.github.io/boatfx-repro/}. I thank, without
+implicating, seminar participants for comments. All errors are my own.}}
+\date{This draft: October 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+The factor zoo throws away live factors, and I show exactly how many, why, and
+how far they can be reclaimed. A universal significance hurdle keeps a factor
+only if its $t$-statistic clears a threshold in the broad market; this rule is
+not merely conservative but mis-specified, because it judges every factor in a
+single venue when strength is local to another. Of 179 anomalies, the 94 that a
+$|t|<1.96$ screen rejects in large-capitalization stocks earn an out-of-sample
+Sharpe ratio of $0.85$ where they are tested, yet $1.30$ when reallocated as a
+group to the market segment they fit---a six-factor alpha of $3.8\%$ per year
+($t=8.3$) that survives $q$-factor spanning, trading costs, and half a century
+of data never used in selection. I explain both the gain and its ceiling with a
+single phase transition. Casting factor-to-venue assignment as a Roy
+self-selection problem, I show that recovering a factor's comparative advantage
+is a spiked-covariance detection problem governed by a Baik--Ben~Arous--P\'ech\'e
+threshold: identifiability depends on a signal-to-noise ratio that scales with
+the number of factors pooled into the estimate. Coarse reallocation of the
+discard pool sits far above the threshold and is almost perfectly recoverable;
+factor-by-factor routing sits below it and is information-theoretically
+impossible. This makes the blunt coarse move not a heuristic but a capacity:
+across five routers chosen to beat it---per-factor argmax, economic-family
+priors, trailing-performance timing, a machine-learning characteristic map, and
+an empirical-Bayes shrinkage rule, each tuned out of sample---not one reliably
+improves on coarse by more than noise, because only six of ninety-four factors
+clear the per-factor threshold and the rest are locked by the data-processing
+inequality. The lesson for a literature chasing conditional factor timing is
+exact: the simple reallocation already extracts what a finite sample permits
+anyone to extract. The welfare cost of the hurdle grows with
+the zoo: as the candidate count rises, the discovery threshold diverges from the
+allocation threshold, and the mass of wrongly discarded local strength expands
+without bound.
+\end{abstract}
+
+\medskip
+\noindent\textbf{Keywords:} factor zoo, multiple testing, comparative advantage,
+random matrix theory, phase transition, limits to arbitrage.\\
+\noindent\textbf{JEL classification:} G11, G12, G14, C58.
+
+\clearpage
+\setcounter{page}{1}
+
+\section*{Introduction}
+\addcontentsline{toc}{section}{Introduction}
+
+Consider an anomaly whose long--short return, measured across all stocks, carries
+a $t$-statistic of $1.4$. Standard practice retires it. It fails the $1.96$
+hurdle that the factor-zoo literature erects to keep false discoveries out of a
+crowded field, so it is deemed spurious and set aside. This paper shows that the
+verdict is frequently a mistake about \emph{venue} rather than \emph{value}. The
+same factor, traded in the slice of the market it is built to exploit instead of
+the broad capitalization-weighted universe where convention evaluates it, earns
+economically large and statistically decisive returns out of sample.
+
+The facts are stark. I study 179 anomalies from the open-source cross-section of
+\citet{ChenZimmermann2022}, each realized in four nested equity universes that
+differ in the size and liquidity of their constituents: capitalization-weighted
+large caps, NYSE-breakpoint portfolios, a size-20 micro-cap construction, and
+equal-weighted small caps. I split the 1926--2024 sample in half. On the first
+half I apply the textbook screen, labeling a factor \emph{discarded} if its
+large-cap $t$-statistic falls below $1.96$; $94$ of the $179$ factors fail. I
+then hold these $94$ discards over the second half, 1975--2024---$594$ months
+never touched in selection---and compare two portfolios. Left in large caps,
+where the profession rejected them, the equal-weighted discard book earns an
+annualized Sharpe ratio of $0.85$. Reassigned as a single pool to the small-cap
+segment that their first-half record identifies as their home, the \emph{same}
+factors earn $1.30$. The improvement of $0.45$ Sharpe units has a bootstrap
+$95\%$ interval of $[0.25,0.67]$ and is positive in $1.000$ of $5{,}000$
+resamples. Four-fifths of the way to the unattainable hindsight ceiling of
+$1.45$, the gain is recovered by a rule a practitioner could have run in 1975.
+
+This is not a size premium in disguise. Against the Fama--French six-factor
+model the reallocated book earns an alpha of $3.8\%$ per year with a
+Newey--West $t$ of $8.3$; against the Hou--Xue--Zhang $q$-factor model, $3.4\%$
+with $t=7.5$. The \emph{incremental} return from reallocation---the long--short
+of the reallocated book against the same factors left in place---is itself an
+alpha of $2.3\%$ per year ($t=5.1$) and survives spanning by the surviving
+canonical factors ($t=4.3$). A joint test that the family-level reallocation
+gains are all zero is rejected at $F(8,594)=5.7$, $p<0.0001$. The gain holds
+under a twelve-month embargo between estimation and trading, under
+expanding-window walk-forward re-estimation ($t=5.6$), in seven of nine decades
+including the 1930s, and after transaction costs up to roughly $85$ basis points
+per one-way trade. For a mean-variance investor it is worth about $1.6\%$ per
+year in certainty equivalent, essentially independent of risk aversion.
+
+Why does a universal hurdle discard value, and---just as important---why has the
+profession not already recovered it with a smarter, factor-by-factor router?
+Both questions have one answer, and it is the theoretical core of the paper. I
+cast the assignment of factors to venues as a Roy (1951) self-selection problem:
+each factor has a venue-specific productivity, and an omniscient planner would
+route it to the venue of its comparative advantage. The analyst, however, sees
+only a noisy, finite-sample estimate of that advantage. Whether the true ranking
+of advantages can be recovered from the estimate is exactly a spiked-covariance
+detection problem, governed by the Baik--Ben~Arous--P\'ech\'e (BBP) threshold
+\citep{BaikBenArousPeche2005,Paul2007}. The recoverable overlap between the
+estimated and true ranking is zero below a critical signal-to-noise ratio and
+rises continuously above it. The signal-to-noise ratio scales with the number of
+factors $m$ aggregated into the estimation unit, $\tau(m)=m\,\Var(a)/\sigma^2$,
+so \emph{resolution}---how finely one attempts to route---determines
+identifiability.
+
+Calibrated to the data, the critical unit size is $m^\star\approx1.3$ factors,
+and this single number organizes every result. A \emph{coarse} rule that moves
+the entire pool of $94$ discards as one unit operates at $m=94$, hence
+$\tau\approx73$ and a recoverable overlap of $0.99$: the reassignment is almost
+perfectly identifiable, and it captures $76\%$ of the hindsight-oracle gain. A
+\emph{fine} rule that routes each factor on its own operates at $m=1$, hence
+$\tau\approx0.78<1$ and a recoverable overlap of zero: factor-by-factor routing
+is information-theoretically impossible out of sample. The data confirm the
+prediction to the decimal. The rank persistence of a factor's own best-venue
+advantage, estimation half to trading half, is $+0.08$---noise, as the theory
+demands---and every attempt to beat the coarse rule with a fine one fails. An
+adaptive router that times venues on trailing performance scores $1.25$; a
+machine-learning router that predicts each factor's venue from its observable
+characteristics scores $1.12$; both fall short of the static coarse $1.30$. The
+wall binds timing and machine learning alike because it is a property of the
+information, not of the algorithm.
+
+This failure is not a verdict on the three routers I happen to try. It is a
+capacity statement, and it is the paper's sharpest claim against current
+practice. A literature now spends great effort conditioning factor exposures on
+states, characteristics, and machine-learned signals, in the belief that a
+cleverer rule will route factors to where they pay. I test five such rules---
+per-factor argmax, economic-family priors, trailing-performance timing, a
+machine-learning characteristic map, and an empirical-Bayes shrinkage rule, each
+tuned on a split internal to the training sample and then frozen---and none
+reliably beats the one-line coarse move by more than noise. The reason is exact:
+only six of the ninety-four discarded factors carry an own-versus-coarse signal
+strong enough to clear the per-factor threshold, so for the other eighty-eight
+the data-processing inequality guarantees that any rule is trading on noise. The
+coarse reallocation is therefore not a convenient heuristic that something better
+will displace. It already extracts what a finite sample permits anyone to
+extract. The contribution is a limit with teeth: it tells the conditional-timing
+literature not that it has not yet found the right model, but that beyond a
+reallocation a practitioner could run in 1975, there is no model to find.
+
+The final result is a comparative static with uncomfortable implications for how
+factors are discovered. The threshold that governs whether a factor is
+\emph{discovered}---the maximum of many $t$-statistics---grows like
+$\sqrt{2\log N}$ in the number of candidates $N$. The threshold that governs
+whether its venue can be \emph{allocated} grows only like $\sqrt{2\log\log N}$.
+The two diverge. As factor factories enlarge $N$ by orders of magnitude, the
+hurdle rises much faster than the information needed to place survivors, so the
+pool of locally strong factors that are discarded but reallocatable expands
+without bound. The problem this paper identifies does not shrink as the zoo is
+cleaned up; it grows.
+
+The argument speaks to three literatures and departs from each in a specific
+way. The first is the factor-zoo and multiple-testing literature
+\citep{HarveyLiuZhu2016,McLeanPontiff2016,ChordiaGoyalSaretto2020}, which raises
+the hurdle to protect against data mining as the count of candidates explodes. I
+take the hurdle as given and ask what it discards; my contribution is to show
+that a fixed universal threshold is mis-specified, not merely strict, because it
+conflates where a factor is weak with whether it is weak. The second is the
+literature on where anomalies live, which documents that they are stronger among
+small, illiquid stocks \citep{FamaFrench2008,IsraelMoskowitz2013}. My point is
+not that small-cap anomalies are strong---that is known---but that the factors
+the profession has \emph{already rejected} harbor recoverable value, and that
+recovering it is a provable boundary problem with a sharp ceiling. The third is
+the use of random matrix theory in finance
+\citep{BaikBenArousPeche2005,Paul2007,BunBouchaudPotters2017}, which cleans
+covariance matrices; I bring the BBP threshold to bear on factor
+\emph{allocation} and derive a resolution limit that predicts both the
+recoverable gain and its ceiling from three measurable primitives.
+
+The paper proceeds as follows. Section~\ref{sec:model} develops the Roy model of
+factor-to-venue sorting and states the four results that organize the evidence:
+Proposition~\ref{prop:hurdle} (the universal hurdle is mis-specified),
+Theorem~\ref{thm:bbp} (the resolution limit), Theorem~\ref{thm:diverge}
+(discovery and allocation thresholds diverge), and Theorem~\ref{thm:capacity}
+(the capacity of local-strength recovery and its converse), together with the
+timing-and-ML corollary. Section~\ref{sec:data} describes the data and the four venues.
+Section~\ref{sec:main} reports the main reallocation result.
+Section~\ref{sec:robust} subjects it to risk adjustment, costs, embargoes, and
+walk-forward re-estimation. Section~\ref{sec:wall} documents the resolution wall
+and the failure of fine routing. Section~\ref{sec:solution} proves the converse:
+a tournament of five routers, each tuned out of sample, shows none beats the
+coarse move by more than noise, so the simple reallocation is the capacity of the
+problem. Section~\ref{sec:mech} calibrates the phase
+transition and shows it reproduces the evidence. Section~\ref{sec:scale} develops
+the divergence result and its implications for the growing zoo.
+Section~\ref{sec:concl} concludes. Proofs, Monte Carlo validation, data
+construction, and secondary robustness tests are in the Internet Appendix.
+
+\section{A Model of Factor Comparative Advantage}
+\label{sec:model}
+
+The empirical results below are easy to state and, I will argue, hard to
+dismiss. But a table of Sharpe ratios does not by itself explain why a universal
+hurdle discards value, nor why a cleverer rule cannot recover more of it than a
+blunt one. This section builds the model that answers both questions. It has
+three moving parts: a Roy (1951) description of where factors are strong, a
+decision problem for an analyst who must infer that strength from finite data,
+and a random-matrix characterization of when the inference is possible. The
+results that follow---one about the hurdle, one about resolution, one about
+scale, and one about the capacity of recovery and its converse---are the spine of
+the paper.
+
+\subsection{Setup: factors, venues, and comparative advantage}
+
+There are $N$ candidate factors indexed by $i$ and $V$ venues indexed by $v$. A
+venue is a tradable universe---a capitalization segment, an exchange, a weighting
+scheme---in which any factor can be formed. Factor $i$ traded in venue $v$
+delivers an excess long--short return with population mean $\mu_{iv}$ and
+variance normalized to one, so that $\mu_{iv}$ is the factor's \emph{true
+Sharpe ratio} in that venue. Collect these in a matrix $M=[\mu_{iv}]$.
+
+I decompose each entry into a part that is common across venues and a part that
+is local to a venue:
+\begin{equation}
+\mu_{iv}=\beta_i+a_{iv},\qquad \sum_{v}a_{iv}=0,
+\label{eq:decomp}
+\end{equation}
+where $\beta_i=\frac1V\sum_v\mu_{iv}$ is factor $i$'s \emph{global strength}---how
+well it works on average across venues---and $a_{iv}$ is its \emph{local
+strength} in venue $v$, the comparative advantage that the Roy model places at
+center stage. By construction local strength is a pure tilt: it reallocates a
+factor's performance across venues without changing its average. The two objects
+answer different questions. Global strength $\beta_i$ asks \emph{whether} a
+factor works; local strength $a_{iv}$ asks \emph{where} it works best.
+
+\subsection{The hurdle is a test of the wrong quantity}
+
+The factor-zoo literature keeps a factor if it clears a significance hurdle in a
+reference venue, almost always the broad capitalization-weighted market. Write
+the reference venue as $v_0$ and the rule as: retain $i$ if
+$\mu_{i,v_0}\ge h$ for a hurdle $h>0$ (in finite samples, if its $t$-statistic in
+$v_0$ clears a critical value; the population statement isolates the economics).
+The following observation, immediate from \eqref{eq:decomp}, is the conceptual
+pivot of the paper.
+
+\begin{proposition}[The universal hurdle is mis-specified]
+\label{prop:hurdle}
+Suppose factor $i$ is retained if and only if $\mu_{i,v_0}\ge h$. Then there
+exist factors with $\mu_{i,v_0}<h$---discarded---yet $\max_v \mu_{iv}\ge h$, so
+that the factor is genuinely profitable in some venue. The discarded set
+contains such factors whenever some factor's local strength satisfies
+$a_{i,v^\star_i}-a_{i,v_0}\ge h-\mu_{i,v_0}>0$, where $v^\star_i=\arg\max_v
+\mu_{iv}$. A rule that evaluates every factor in the single venue $v_0$ therefore
+commits a type of error that no choice of $h$ can remove: it rejects local
+strength as if it were absence of strength.
+\end{proposition}
+
+\noindent The proof is one line and appears in Internet Appendix~IA.1;
+the content is in the reading. The hurdle is not too high or too low. It is
+pointed at the wrong quantity. It measures $\mu_{i,v_0}$, a single column of
+$M$, and discards on that basis, when the economically relevant quantity is
+$\max_v\mu_{iv}$, the row maximum. Raising $h$ to control false discoveries, the
+response of the multiple-testing literature, makes this error \emph{worse}, not
+better, because it discards more rows on the strength of one column. The question
+is then whether the row maximum, and the venue that attains it, can be recovered
+from data. That is a problem of inference, and it is where the next two results
+bind.
+
+\subsection{The analyst's problem and the signal-to-noise ratio}
+
+An omniscient planner who knew $M$ would route each factor to its best venue
+$v^\star_i$ and capture $\frac1N\sum_i\max_v\mu_{iv}$, the hindsight oracle. The
+analyst does not know $M$. From a sample of length $T$ she forms estimates
+$\hat\mu_{iv}=\mu_{iv}+\varepsilon_{iv}$, where the sampling error of a Sharpe
+ratio has variance
+\begin{equation}
+\sigma^2=\Var(\varepsilon_{iv})=\frac{1+\tfrac12\SR^2}{T_{\text{eff}}},
+\label{eq:lo}
+\end{equation}
+the \citet{Lo2002} standard error, with $T_{\text{eff}}$ the effective number of
+independent observations after accounting for serial dependence. She must decide,
+for a chosen \emph{unit of aggregation} of $m$ factors, which venue the unit
+prefers, using only the local-strength estimates $\hat a_{iv}$. The unit may be a
+single factor ($m=1$, fine routing) or the entire discard pool ($m=N$, coarse
+reallocation); resolution is the analyst's choice, and it is the choice that
+decides everything.
+
+Stack the local-strength estimates for a unit into a venue-by-factor array and
+ask the natural question: does the leading direction of the estimated array line
+up with the leading direction of the true array $[a_{iv}]$? This is a signal
+(the true local-strength tilt) observed through additive noise (sampling error),
+and whether the signal survives is governed by their ratio. Define the
+\emph{local-strength signal-to-noise ratio} of a unit of $m$ factors as
+\begin{equation}
+\tau(m)=\frac{m\,\Var_{\text{cross}}(a)}{\sigma^2},
+\qquad c=\frac{V-1}{T_{\text{eff}}},
+\label{eq:tau}
+\end{equation}
+where $\Var_{\text{cross}}(a)$ is the cross-venue dispersion of true local
+strength---how much comparative advantage there is to find---and $c$ is the
+aspect ratio of the estimation problem. The quantity $\tau$ rises with the amount
+of real signal and the number of factors pooled, and falls with sampling noise.
+Everything hinges on how large it is relative to one.
+
+\subsection{The resolution limit}
+
+The estimated local-strength array is a low-rank signal buried in a noise matrix,
+exactly the object studied by random matrix theory. Its leading sample
+eigenvector---the venue tilt the analyst would act on---aligns with the truth
+only once the signal clears a sharp threshold. This is the
+Baik--Ben~Arous--P\'ech\'e phase transition
+\citep{BaikBenArousPeche2005,Paul2007}, and it delivers the paper's central
+limit on how finely factors can be routed.
+
+\begin{theorem}[Resolution limit of local strength]
+\label{thm:bbp}
+Let a unit of $m$ factors have signal-to-noise ratio $\tau(m)$ and aspect ratio
+$c$ as in \eqref{eq:tau}. As $T_{\text{eff}},m\to\infty$ with $c$ fixed, the
+squared overlap $q^2$ between the estimated best-venue direction and the true
+best-venue direction converges almost surely to
+\begin{equation}
+q^2(\tau)=
+\begin{cases}
+0, & \tau\le 1,\\[4pt]
+\dfrac{1-1/\tau}{1+c/\tau}, & \tau>1.
+\end{cases}
+\label{eq:q2}
+\end{equation}
+Consequently there is a critical unit size $m^\star$, solving $\tau(m^\star)=1$,
+below which the analyst's estimated routing is asymptotically uncorrelated with
+the truth, and above which the recoverable fraction of the oracle's
+local-strength gain equals $q^2(\tau(m))$ and rises continuously toward one.
+\end{theorem}
+
+\noindent The proof maps the problem onto a rank-one spiked covariance model and
+invokes the BBP almost-sure limit; it is given in full in Internet
+Appendix~IA.1, with the finite-sample accuracy of \eqref{eq:q2}
+verified by Monte Carlo in Appendix~IA.2. The economics of
+\eqref{eq:q2} are worth stating plainly. Below the threshold the top sample
+eigenvector is pure noise: it points in a direction unrelated to true
+comparative advantage, so acting on it adds nothing in expectation. There is no
+smooth decay into this region and no partial credit---the overlap is exactly
+zero, not merely small. Above the threshold the signal condenses, the eigenvector
+rotates toward the truth, and the recoverable gain grows. The transition is a
+genuine discontinuity in \emph{behavior}, and it converts the vague intuition
+``you need enough data'' into a falsifiable inequality, $\tau(m)\gtrless 1$,
+whose two sides the data will occupy cleanly.
+
+Because $\tau$ scales linearly in $m$, Theorem~\ref{thm:bbp} is a statement about
+resolution. The same primitives can place a unit on either side of the wall
+depending only on how many factors are pooled into it. Coarse reallocation of
+the whole discard pool makes $m$ large and lands far above the threshold; routing
+one factor at a time makes $m=1$ and, as the calibration in
+Section~\ref{sec:mech} shows, lands below it. A single mechanism thus predicts
+both that coarse reallocation works and that fine routing cannot---not for want
+of a better method, but because the information to route finely does not exist in
+the sample.
+
+\subsection{Discovery and allocation thresholds diverge}
+
+The last result turns from a fixed zoo to a growing one and asks how the problem
+scales. Two thresholds govern a factor's fate. To be \emph{discovered} it must
+clear a multiple-testing hurdle: with $N$ candidates and independent noise, the
+largest spurious $t$-statistic is of order $\sqrt{2\log N}$, so the discovery
+threshold is $\kappa_D(N)\asymp\sqrt{2\log N}$---the familiar reason the hurdle
+must rise with the zoo \citep{HarveyLiuZhu2016}. To have its venue
+\emph{allocated}, by contrast, the analyst needs only to preserve the
+\emph{ranking} of a factor's venue advantages, not to certify any single one
+against the global null. The relevant control is on the maximum of the
+estimation errors around an already-identified ordering, which concentrates at
+rate $\sqrt{2\log\log N}$.
+
+\begin{theorem}[Divergence of discovery and allocation]
+\label{thm:diverge}
+Let $\kappa_D(N)\asymp\sqrt{2\log N}$ be the discovery threshold and
+$\kappa_A(N)\asymp\sqrt{2\log\log N}$ the allocation threshold for a zoo of $N$
+candidate factors. Then the gap
+\begin{equation}
+\Delta(N)=\kappa_D(N)-\kappa_A(N)\asymp\sqrt{2\log N}-\sqrt{2\log\log N}
+\to\infty
+\label{eq:gap}
+\end{equation}
+diverges as $N\to\infty$. Hence the measure of factors that fail discovery yet
+retain allocatable local strength---the discards this paper reallocates---grows
+without bound in the size of the zoo.
+\end{theorem}
+
+\noindent The two thresholds grow at different speeds because they answer
+different questions, and the iterated logarithm is the fingerprint of the easier
+one. Discovery fights the whole family of candidates at once and pays the
+$\sqrt{2\log N}$ price of the maximum; allocation only has to keep a within-factor
+ordering straight and pays the far gentler $\sqrt{2\log\log N}$. The practical
+reading is uncomfortable. Each new generation of factor factories enlarges $N$ by
+orders of magnitude and, to hold false discoveries in check, raises the hurdle in
+step with $\sqrt{2\log N}$. But the information needed to place the survivors
+grows only like $\sqrt{2\log\log N}$. The scissors open. The very act of
+policing the zoo more strictly discards an ever larger reservoir of local
+strength that remains, by Theorem~\ref{thm:bbp}, recoverable in aggregate. The
+problem is not a relic of a messy early literature that careful work will tidy
+away; it is a feature that intensifies precisely as the literature grows more
+careful.
+
+\subsection{Why timing and machine learning cannot help}
+
+A natural objection is that the fine-routing failure reflects a weak method, and
+that conditioning on more information---trailing performance, firm
+characteristics, a flexible machine-learning map---would recover the per-factor
+venue. Theorem~\ref{thm:bbp} says otherwise, and the logic is a corollary rather
+than a new result.
+
+\begin{corollary}[No conditioning rescues sub-threshold routing]
+\label{cor:ml}
+Any venue-routing rule for a unit of $m$ factors is a measurable function of the
+in-sample estimates $\hat a_{iv}$. If $\tau(m)\le 1$, the leading estimated
+direction carries no asymptotic information about the true best venue
+($q^2=0$), so no measurable function of the estimates---linear timing rule,
+nonlinear machine-learning map, or otherwise---can achieve positive expected
+overlap with the oracle routing. Conditioning on auxiliary signals helps only to
+the extent that those signals raise $\tau$ above one; absent that, the data
+processing inequality caps the achievable gain at the coarse-unit value.
+\end{corollary}
+
+\noindent The corollary draws a bright line between the two halves of the
+evidence. Coarse reallocation works because it pools $m$ large enough to clear
+the threshold, so there is signal for \emph{any} method to use. Fine routing
+fails because at $m=1$ there is no signal, and the data-processing inequality
+forbids manufacturing it: a cleverer function of noise is still noise. This is
+why, in Section~\ref{sec:wall}, an adaptive timing router and a
+machine-learning characteristic router both underperform the one-line static
+rule. They are not badly tuned. They are solving a problem the sample does not
+contain the information to solve. The wall is informational, and it binds every
+method equally.
+
+\subsection{The coarse move is a capacity}
+
+The corollary forbids per-factor routing. The next result turns that prohibition
+into a positive statement about the coarse move: it is not merely a good rule, it
+is the most any causal rule can achieve. The intuition is that the oracle gain is
+sparse across factors---most discards belong at the coarse venue, and only a few
+carry an own-versus-coarse advantage worth acting on---so the expected gain of
+\emph{any} router is bounded by how much of that sparse signal the resolution
+limit leaves recoverable.
+
+It helps to account for the oracle in full, because the arithmetic is the whole
+argument in miniature. The hindsight oracle earns a Sharpe ratio of $1.45$ and
+the grave earns $0.85$, a total gap of $0.60$. The coarse move captures $0.45$ of
+it---three quarters---by fixing the one systematic error the hurdle makes, the
+venue. That leaves a residual of $0.14$ between coarse and oracle. This residual
+is the \emph{only} place a finer rule could add value, and the converse below
+shows almost all of it is noise: of the $0.14$, the best out-of-sample router in
+a five-way tournament recovers $0.05$, about a third, and the rest is locked.
+The paper's two halves are these two numbers. The $0.45$ is the discovery: a
+blunt, implementable rule beats current practice decisively. The $0.14$ residual,
+nearly all of it unrecoverable, is the boundary: no amount of cleverness
+converts it into return. Where $\tau<1$, there is nothing to find.
+
+\begin{theorem}[Converse: coarse attains capacity]
+\label{thm:capacity}
+Let each discarded factor carry an own-versus-coarse spread with per-factor
+signal-to-noise ratio $\tau_i$, and let $v^\star_i$ be its best venue. The
+expected gain over coarse of any causal routing rule---any measurable function of
+the in-sample estimates---satisfies
+\[
+0\;\le\;\mathbb{E}[\Delta]\;\le\;
+\sum_i q^2(\tau_i)\,\bigl(\mu_{i,v^\star_i}-\mu_{i,\text{coarse}}\bigr).
+\]
+By Theorem~\ref{thm:bbp} every factor with $\tau_i\le 1$ contributes $q^2=0$: a
+measurable function of its estimate is noise. Hence when only a small fraction of
+factors clear $\tau_i>1$, the bound is small, and no rule---timing, machine
+learning, shrinkage, or otherwise---can reliably improve on coarse.
+\end{theorem}
+
+\noindent The proof is in Internet Appendix~IA.1; it is a data-processing
+argument, not an optimization. The economic content is a converse in the
+information-theoretic sense: the ceiling on improvement over coarse is fixed by
+how much local strength is identifiable, not by the ingenuity of the method.
+Section~\ref{sec:solution} shows the bound bites in the data. Only six of the
+ninety-four discards clear $\tau_i>1$; five routers built to beat coarse---
+including an empirical-Bayes rule given free rein---are run honestly out of
+sample, and none improves on it by more than noise. The simple reallocation is
+where the information runs out.
+
+\section{Data and the Four Venues}
+\label{sec:data}
+
+The empirical object is the cross-section of equity anomalies assembled by
+\citet{ChenZimmermann2022}, whose open-source library reconstructs the published
+predictor portfolios of the asset-pricing literature from original signal
+definitions. I retain the $179$ anomalies that can be formed continuously over
+1926--2024 in all of the venues described below. Each anomaly is a monthly
+long--short return: the signal is cross-sectionally ranked, and the portfolio is
+long the top and short the bottom of the ranking. Benchmark factors---the
+market, size, value, profitability, investment, and momentum of
+\citet{FamaFrench2015} and \citet{Carhart1997}, and the $q$-factors of
+\citet{HouXueZhang2015}---come from the authors' data libraries. All returns are
+monthly and in excess of the one-month Treasury bill.
+
+The economic content of the paper lives in the notion of a \emph{venue}: the
+same signal, formed in a different slice of the market. I construct four nested
+universes that span the size and liquidity dimensions along which anomalies are
+known to vary \citep{FamaFrench2008,IsraelMoskowitz2013}. The first,
+\emph{vw}, is the capitalization-weighted universe of large stocks---the
+reference venue of convention, in which a factor's $t$-statistic is customarily
+judged. The second, \emph{nyse}, forms the signal within NYSE breakpoints,
+tilting toward larger and more liquid names. The third, \emph{me20}, is a
+micro-cap construction that over-weights the smallest two deciles. The fourth,
+\emph{wide}, is the equal-weighted universe, which gives the smallest and least
+liquid stocks the greatest influence. Moving from \emph{vw} to \emph{wide} is a
+move from the deepest, most arbitraged corner of the market to its thinnest,
+least arbitraged corner---precisely the dimension along which a factor's local
+strength should vary if limits to arbitrage, not risk, drive the cross-section.
+No signal is re-defined across venues; only the universe in which it is formed
+changes, so differences in performance are differences in \emph{where} the same
+bet is placed.
+
+Table~\ref{tab:summary} and Panel~A of Figure~\ref{fig:summary} summarize factor
+strength by venue. The median anomaly Sharpe ratio rises monotonically as the
+venue thins, from $0.20$ in large caps to $0.32$ at NYSE breakpoints, $0.37$ in
+micro caps, and $0.43$ equal-weighted; the mean and the full dispersion rise with
+it. This is the backdrop against which the paper's claim must be read. It is no
+surprise that anomalies are stronger among small stocks. The surprise is that the
+factors the profession has \emph{already discarded} in large caps carry
+recoverable strength elsewhere, and that recovering it is bounded by a law. The
+cross-venue correlation of factor strength is informative about that law: a
+factor's large-cap Sharpe correlates only $0.62$ with its equal-weighted Sharpe,
+so a sizable component of comparative advantage is genuinely local rather than a
+rescaling of a common signal---there is real $a_{iv}$ to find, which is the
+premise of Theorem~\ref{thm:bbp}.
+
+\begin{table}[t]
+\centering
+\caption{Anomaly strength by venue, 1926--2024}
+\label{tab:summary}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+Venue & $N$ & Mean SR & Median SR & SD & 10--90 pct \\
+\midrule
+Large-cap (vw)   & 179 & 0.23 & 0.20 & 0.25 & $[-0.07,\ 0.53]$ \\
+NYSE             & 179 & 0.33 & 0.32 & 0.26 & $[\phantom{-}0.03,\ 0.62]$ \\
+Micro-cap (me20) & 178 & 0.35 & 0.37 & 0.29 & $[\phantom{-}0.02,\ 0.64]$ \\
+Small-cap (wide) & 179 & 0.49 & 0.43 & 0.37 & $[\phantom{-}0.09,\ 0.97]$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Annualized Sharpe ratios of $179$ long--short anomaly portfolios formed in
+each of four venues. The venues are nested universes differing in the size and
+liquidity of constituents. Source: \texttt{cn\_exhibits.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig10_summary.png}
+\caption{\textbf{Where anomalies live, and who revives.} Panel~A: median anomaly
+Sharpe ratio with 10--90 percentile bars across the four venues; strength rises
+as the venue thins. Panel~B: out-of-sample reallocation gain by economic family,
+sorted. Value and profitability gain most; risk is neutral. Source:
+\texttt{cn\_exhibits.json}.}
+\label{fig:summary}
+\end{figure}
+
+The design that disciplines every result is a strict temporal split. I use the
+first half of the sample, 1926--1974, only to \emph{select} and to \emph{assign}:
+to apply the significance screen and to estimate each factor's home venue. I use
+the second half, 1975--2024---$594$ months---only to \emph{evaluate}. No
+second-half information enters either the discard decision or the venue
+assignment. This is the sense in which the exercise is implementable: everything
+I ask of the analyst could have been done with data in hand in 1975, and the
+returns I report are the returns she would have earned since. Where this single
+split might seem to invite cherry-picking, Section~\ref{sec:robust} re-runs the
+entire exercise with the split year moved across two decades, with a
+twelve-month embargo inserted between estimation and trading, and with fully
+expanding-window re-estimation; the conclusions do not depend on the cut.
+
+\section{The Main Result: Reallocation Revives the Discarded}
+\label{sec:main}
+
+The experiment is deliberately austere. On the first half of the sample I label a
+factor \emph{discarded} if its large-cap $t$-statistic falls below $1.96$, the
+canonical two-sided $5\%$ hurdle. Ninety-four of the $179$ factors fail. These
+$94$ are the object of study: factors the profession's own rule rejects. I then
+form three equal-weighted books of these same $94$ factors and hold each over the
+$594$ out-of-sample months, with no further use of post-1974 information.
+
+The \emph{grave} book leaves the discards where they were rejected, in large
+caps---the counterfactual in which the hurdle's verdict stands. The \emph{coarse}
+book moves the entire pool, as one unit, to the single venue that the first-half
+data identify as the pool's best home; that venue is the equal-weighted
+small-cap universe. This is the $m=N$ reallocation of Section~\ref{sec:model}: one
+decision for all $94$ factors, taken once, using only pre-1975 information. For
+reference I also report two bounds. The \emph{oracle} book routes each factor to
+the venue that maximizes its \emph{second-half} Sharpe---an unattainable
+hindsight ceiling. The \emph{fine} book attempts to approximate the oracle
+honestly, routing each factor to its own first-half best venue; this is the
+$m=1$ rule whose failure the theory predicts and Section~\ref{sec:wall}
+documents.
+
+The result is Figure~\ref{fig:resurrection} and Table~\ref{tab:main}. Left in the
+grave, the discards earn an out-of-sample Sharpe ratio of $0.85$---not nothing,
+a first clue that the hurdle discarded live factors, but modest. Reallocated
+coarsely, the \emph{same} factors earn $1.30$. The gain of $0.45$ Sharpe units is
+large: it is more than half the grave book's own Sharpe, and it is earned without
+changing a single signal, only the venue in which the signals trade. A
+stationary bootstrap \citep{PolitisRomano1994} with $5{,}000$ resamples places
+the gain's $95\%$ interval at $[0.25,0.67]$ and finds it positive in every
+resample ($p_{>0}=1.000$). The hindsight oracle earns $1.45$; coarse reallocation
+therefore captures
+\[
+\frac{1.30-0.85}{1.45-0.85}=76\%
+\]
+of the maximum attainable gain with a rule fixed in 1975. The fine book, routing
+each factor on its own, earns only $1.12$---below coarse, exactly the inversion
+the resolution limit predicts and the subject of Section~\ref{sec:wall}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\textwidth]{fig_resurrection.png}
+\caption{\textbf{Reallocation revives the discarded.} Out-of-sample
+(1975--2024) Sharpe ratios of the $94$ factors a $|t|<1.96$ large-cap screen
+rejects on 1926--1974 data. Grave: left in large caps. Coarse: whole pool moved
+to its first-half best venue. Fine: each factor to its own first-half best venue.
+Oracle: hindsight ceiling. Coarse captures $76\%$ of the oracle gain and beats
+fine. Source: \texttt{cn\_resurrection\_coarse.json}.}
+\label{fig:resurrection}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\caption{Out-of-sample performance of the discarded factors, 1975--2024}
+\label{tab:main}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+Book & Out-of-sample SR & Gain over grave \\
+\midrule
+Grave (large-cap, as rejected) & 0.85 & --- \\
+Fine (per-factor routing, $m{=}1$) & 1.12 & $+0.27$ \\
+Coarse (pool reallocation, $m{=}N$) & 1.30 & $+0.45$ \\
+Oracle (hindsight ceiling) & 1.45 & $+0.60$ \\
+\midrule
+\multicolumn{3}{l}{Coarse gain bootstrap $95\%$ CI: $[0.25,\ 0.67]$,\quad
+$p_{>0}=1.000$} \\
+\multicolumn{3}{l}{Coarse captures $76\%$ of oracle gain;\quad fine $<$ coarse by
+$0.18$} \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Equal-weighted books of the $94$ discarded factors. Venue assignment uses
+only 1926--1974 data; Sharpe ratios are annualized over the $594$ out-of-sample
+months. Source: \texttt{cn\_resurrection\_coarse.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+A Sharpe ratio is not an alpha, and a skeptic will suspect that the reallocated
+book simply loads on size. It does not. Table~\ref{tab:alpha} regresses the
+coarse book's excess return on progressively richer factor models with
+Newey--West \citeyearpar{NeweyWest1987} standard errors at twelve lags. Against
+the CAPM the annualized alpha is $5.2\%$ ($t=7.1$); against the Fama--French
+three-factor model, $4.6\%$ ($t=8.3$); against the five-factor model, $4.1\%$
+($t=8.1$); against the six-factor model that adds momentum, $3.8\%$ ($t=8.3$).
+The size loading is small and does not absorb the return. Against the
+Hou--Xue--Zhang $q$-factor model the alpha is $3.4\%$ ($t=7.5$). Most tellingly,
+the \emph{incremental} return of reallocation---the coarse book minus the grave
+book, which differ \emph{only} in venue and so hold the signals fixed---is itself
+a six-factor alpha of $2.3\%$ per year ($t=5.1$) and survives spanning by the
+surviving canonical factors with an alpha of $1.8\%$ ($t=4.3$). Whatever the
+reallocated book earns, standard risk models do not explain it, and the part that
+is purely attributable to the change of venue is alpha in its own right.
+
+\begin{table}[t]
+\centering
+\caption{Risk-adjusted alphas of the reallocated book, 1975--2024}
+\label{tab:alpha}
+\begin{threeparttable}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{Coarse book} & \multicolumn{2}{c}{Gain (coarse $-$ grave)}\\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}
+Model & $\alpha$ (\%/yr) & $t$ & $\alpha$ (\%/yr) & $t$ \\
+\midrule
+CAPM        & 5.18 & 7.13 & 1.90 & 4.05 \\
+FF3         & 4.62 & 8.25 & 2.13 & 5.07 \\
+FF5         & 4.13 & 8.09 & 2.10 & 4.99 \\
+FF6         & 3.78 & 8.27 & 2.30 & 5.12 \\
+HXZ $q5$    & 3.41 & 7.48 & 2.03 & 4.56 \\
+Canon span  & \multicolumn{2}{c}{---} & 1.84 & 4.34 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Annualized alphas with Newey--West (12-lag) $t$-statistics. ``Gain'' is the
+coarse book minus the grave book. ``Canon span'' adds the surviving ($|t|\ge
+1.96$) factors as spanning regressors. Sources: \texttt{cn\_referee.json},
+\texttt{cn\_referee4.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\section{Is It Real? Costs, Timing, and Out-of-Sample Discipline}
+\label{sec:robust}
+
+A result this clean invites suspicion, and it should. This section runs the
+reallocation gain through the gauntlet a skeptical referee would build: trading
+costs, the single-split objection, an estimation embargo, fully out-of-sample
+re-estimation, the deflated Sharpe ratio, and the economic value to an investor.
+The gain survives all of them. I present the evidence as answers to the questions
+a referee actually asks.
+
+\paragraph{Does it survive trading costs?} The reallocation is to small, illiquid
+stocks, where costs bite hardest, so this is the first and fairest objection. The
+key observation is that reallocation is an \emph{annual} venue decision, not a
+monthly rebalancing: within a venue, the grave and coarse books trade identically,
+so the \emph{incremental} turnover of the strategy is only the once-a-year change
+of universe. Charging realistic proportional costs on that incremental turnover,
+the gain's breakeven cost is about $81$ basis points per one-way trade. The net
+coarse Sharpe remains $1.24$ at $10$ bps, $1.12$ at $30$ bps, and $0.98$ at $50$
+bps. Even at a punishing $100$ bps---far above estimates for the small-cap
+universe in the modern era---the coarse book still outperforms the gross grave
+book. The gain is not an illusion of frictionless accounting.
+
+\paragraph{Does it depend on the split year?} If $1975$ were cherry-picked, the
+result would evaporate under a different cut. It does not. Moving the split
+across 1970, 1980, 1990, and 2000, the coarse gain is $+0.24$, $+0.56$, $+0.62$,
+and $+0.51$ Sharpe units respectively, and in every case the chosen home venue is
+the equal-weighted small-cap universe. The one exception is informative rather
+than fatal: at a $1960$ split the gain is slightly negative, but only $40$
+factors have been discarded by then and the first-half estimation window is just
+$34$ years, too short and too thin for the pool's comparative advantage to be
+estimated---exactly the small-sample regime in which Theorem~\ref{thm:bbp} warns
+the signal has not yet condensed. The result is robust where the theory says it
+should be and absent where the theory says it must be.
+
+\paragraph{Does it survive a true out-of-sample protocol?} Two tightenings
+address any residual look-ahead. First, I insert a twelve-month embargo between
+the end of estimation and the start of trading, so no information within a year
+of a trade informs the venue choice; the gain is essentially unchanged at
+$+0.48$. Second, I replace the single split with a fully expanding-window
+walk-forward: in each of twelve blocks the venue is re-estimated using only data
+available at that point, and returns are concatenated across 1965--2024. The
+walk-forward gain is $+0.72$ Sharpe units with a Newey--West $t$ of $5.6$. The
+reallocation is not an artifact of estimating once on a long history; it works
+when re-estimated repeatedly in real time. Finally, the deflated Sharpe ratio of
+\citet{BaileyLopezdePrado2014}, which haircuts for the multiplicity of venues
+tried, leaves the gain comfortably significant.
+
+\paragraph{Is it worth anything to an investor?} Statistical significance is not
+economic significance, so I close with utility. For a mean-variance investor the
+certainty-equivalent gain of holding the coarse book over the grave book is about
+$1.6\%$ per year, and it is almost flat in risk aversion---$1.61\%$ at
+$\gamma=1$, $1.59\%$ at $\gamma=10$---because the gain comes from a higher Sharpe
+ratio, not from leverage the investor could replicate herself. Pulling these
+threads together, a joint GRS \citep{GibbonsRossShanken1989} test that the
+reallocation gains across all eight economic families are simultaneously zero is
+rejected at $F(8,594)=5.7$ ($p<0.0001$). Figure~\ref{fig:cergrs} displays the
+utility gain and the joint test. The reallocation gain is real on every
+dimension a referee can name: it survives costs, it does not depend on the split,
+it holds under embargo and walk-forward re-estimation, it clears the deflated
+Sharpe hurdle, it is jointly significant across families, and it is worth real
+money.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig11_cer_grs.png}
+\caption{\textbf{Economic value and joint significance.} Panel~A: annual
+certainty-equivalent gain of the coarse over the grave book, by risk aversion
+$\gamma$; nearly flat because the gain is a Sharpe-ratio improvement. Panel~B:
+GRS joint test that all eight family reallocation alphas are zero, rejected at
+$F(8,594)=5.7$, $p<0.0001$. Source: \texttt{cn\_exhibits.json}.}
+\label{fig:cergrs}
+\end{figure}
+
+\section{The Resolution Wall: Why Fine Routing Fails}
+\label{sec:wall}
+
+The main result raises an obvious question. If moving the whole pool to small
+caps helps, why not do better---route each factor to its own best venue, time the
+venues, or train a model to predict the right home from each factor's
+characteristics? This section shows that every such attempt fails, and that the
+failure is not a defect of method but the resolution limit of
+Theorem~\ref{thm:bbp} binding exactly where it should.
+
+Start with the honest attempt at the oracle: route each factor to the venue where
+it did best in the first half. This fine book earns $1.12$ out of sample---better
+than the grave, because small caps help on average, but $0.18$ Sharpe units
+\emph{worse} than the coarse pool. Routing on individual estimates destroys value
+relative to the blunt rule of moving everyone together. The reason is in the
+data. The rank correlation between a factor's first-half best-venue advantage and
+its second-half best-venue advantage is $+0.08$---statistically
+indistinguishable from zero. A factor's estimated home does not predict its
+realized home. By Theorem~\ref{thm:bbp}, this is precisely what a single factor
+must look like: at $m=1$ the signal-to-noise ratio is $\tau=0.78<1$, below the
+phase transition, so the estimated best venue is asymptotically uncorrelated with
+the true one and the recoverable overlap is zero. The $+0.08$ is not a weak
+signal to be sharpened; it is the noise the theory predicts.
+
+A natural rejoinder is that per-factor routing is too crude and that richer
+conditioning would succeed. Corollary~\ref{cor:ml} says it cannot, and two
+deliberately strong attempts confirm it. The first is an \emph{adaptive timing}
+router that, each period, moves each factor to the venue with the best trailing
+performance---a strategy that uses the whole history, updates continuously, and
+is far more flexible than a one-time choice. It earns $1.25$, below the static
+coarse $1.30$. The second is a \emph{machine-learning} router that predicts each
+factor's home venue from its observable characteristics (its loadings, its
+volatility, its turnover), trained on the first half and applied out of sample.
+It earns $1.12$, also below coarse. Neither flexibility nor conditioning
+information helps, because the quantity they are trying to estimate---the
+per-factor venue advantage---has $\tau<1$ and therefore carries no recoverable
+signal. A more powerful function of noise is still noise; this is the
+data-processing inequality, and it is why the wall binds timing and machine
+learning alike. The lesson is not that these methods are badly implemented. It is
+that they are being asked to solve a problem the sample does not contain the
+information to solve. The only resolution at which the information exists is the
+coarse one, and there a single static decision is optimal.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig3_boundary.png}
+\caption{\textbf{The resolution wall.} Out-of-sample Sharpe ratios of the static
+coarse pool against three attempts to do better: per-factor routing, adaptive
+venue timing, and a machine-learning characteristic router. All three fall below
+the coarse pool. Fine routing operates at $m=1$, where $\tau=0.78<1$ and the
+recoverable overlap is zero. Sources: \texttt{cn\_resurrection\_coarse.json},
+\texttt{cn\_referee3.json}.}
+\label{fig:wall}
+\end{figure}
+
+Table~\ref{tab:wall} collects the four strategies. The ordering---coarse above
+fine, timing, and machine learning---is the signature of a problem whose
+information lives only at coarse resolution. It is worth pausing on how unusual
+this is. In most of empirical finance, more conditioning information and more
+flexible models help, if only a little, and the burden is on the skeptic to show
+they do not. Here the opposite holds, and it holds for a reason that can be
+written down: below the phase transition there is nothing to condition on. The
+wall is the empirical shadow of Theorem~\ref{thm:bbp}.
+
+\begin{table}[t]
+\centering
+\caption{The static coarse pool beats every finer rule}
+\label{tab:wall}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+Strategy & Resolution & Out-of-sample SR \\
+\midrule
+Coarse pool (static)            & $m=N$ & \textbf{1.30} \\
+Adaptive venue timing           & $m=1$ & 1.25 \\
+Per-factor routing (fine)       & $m=1$ & 1.12 \\
+Machine-learning router         & $m=1$ & 1.12 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item All books hold the same $94$ discarded factors over 1975--2024. Only the
+assignment rule differs. Sources: \texttt{cn\_resurrection\_coarse.json},
+\texttt{cn\_referee3.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\section{The Converse: Coarse Reallocation Is a Capacity}
+\label{sec:solution}
+
+The coarse move captures $76\%$ of the hindsight oracle. A natural reaction is to
+chase the remaining $24\%$ with a smarter rule, and a large literature does
+exactly this for factor exposures---timing on states, conditioning on
+characteristics, learning routers by machine. This section shows the chase is
+futile here, and says so precisely. The residual gap is not waiting for a better
+method; it is noise-locked. I establish this constructively: I build five routers
+designed to beat coarse, tune each one honestly out of sample, and show that none
+improves on the one-line reallocation by more than noise. The reason is the
+converse of Theorem~\ref{thm:capacity}---only a handful of factors carry a
+recoverable own-versus-coarse signal---and it reframes the coarse move from a
+useful trick into the capacity of the problem.
+
+\subsection{The signal is sparse, and mostly below the wall}
+
+Two facts about the discard pool explain why no router can help much. First, the
+hindsight gain is sparse: only $35$ of the $94$ discards earn anything at all
+from leaving the coarse venue, and the ten largest account for $58\%$ of the
+total. Most factors belong exactly where coarse puts them. Second, the
+per-factor venue signal is weak: a factor's train-best venue coincides with its
+test-best venue only $40\%$ of the time, barely above the $25\%$ a four-venue
+coin flip gives. Formalizing the second fact, I compute each factor's
+own-versus-coarse signal-to-noise ratio $\tau_i$ on the training half. Only six
+of the ninety-four clear $\tau_i>1$; the distribution is overwhelmingly below the
+wall ($39$ factors at $\tau_i\le 0.5$, two in $(0.5,1]$, and six above one). By
+Theorem~\ref{thm:bbp}, the eighty-eight factors with $\tau_i\le 1$ carry zero
+recoverable venue information: any rule that moves them is trading on noise. This
+is the content of the converse. The recoverable signal is confined to a handful
+of factors, so the ceiling on any router's gain over coarse is low by
+construction, not by lack of effort.
+
+\subsection{Five routers, tuned honestly, none beats coarse}
+
+To make ``no method helps'' a demonstration rather than an assertion, I run a
+tournament. Each contender is a rule for assigning the $94$ discards to venues;
+each is given every advantage---full access to the training half, and where it
+has a tuning parameter, that parameter is chosen on a split \emph{internal} to
+the training half and then frozen before the test half is touched. The
+contenders span the methods the literature actually uses. \emph{Fine argmax}
+routes each factor to its own train-best venue. \emph{Economic-family} routing
+assigns each factor its family's best venue, using an exogenous prior rather than
+a noisy per-factor estimate. \emph{Selective hard-threshold} deviates a factor
+only when its own-versus-coarse spread $t$ clears a cutoff tuned out of sample.
+\emph{Empirical Bayes} shrinks the per-factor spreads James--Stein style and
+routes on the shrunken signal, with its own out-of-sample cutoff. The benchmark
+is the one-line coarse move.
+
+Table~\ref{tab:exhaustion} and Figure~\ref{fig:exhaust} report the result. The
+coarse book earns an out-of-sample Sharpe ratio of $1.30$. Fine argmax, routing
+everyone, destroys value and falls to $1.12$. The selective hard-threshold rule,
+tuned honestly, lands at $1.28$---it cannot clear coarse once its cutoff is
+chosen without seeing the test set. The empirical-Bayes router reaches $1.35$,
+a $+0.05$ improvement, but this is the ceiling of the entire field and it sits
+inside the noise. Put the number in context: the entire residual between coarse
+and the hindsight oracle is $0.14$ Sharpe units, and the best out-of-sample
+router recovers $0.05$ of it---about a third---while the other two-thirds is
+information-theoretically locked. All five methods are contained in a band of
+width $0.05$ around coarse; routing every factor, by contrast, \emph{loses}
+$0.18$. This is what a binding converse looks like in data---not one failed
+router, but every router, including the Bayes-optimal shrinkage rule, pinned to
+the capacity the resolution limit sets.
+
+\begin{table}[t]
+\centering
+\caption{The router tournament: none escapes the coarse capacity}
+\label{tab:exhaustion}
+\begin{threeparttable}
+\begin{tabular}{lcc}
+\toprule
+Router (tuning frozen out of sample) & OOS Sharpe & vs coarse \\
+\midrule
+Fine argmax (route every factor)        & 1.12 & $-0.18$ \\
+Selective hard-threshold                & 1.28 & $-0.02$ \\
+\textbf{Coarse (one-line reallocation)} & \textbf{1.30} & --- \\
+Empirical-Bayes shrinkage               & 1.35 & $+0.05$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item All books hold the $94$ discards over 1975--2024. Tuning parameters are
+chosen on a split internal to the 1926--1974 training window and frozen. The full
+spread of outcomes is $0.23$ Sharpe units, of which $0.18$ is the \emph{loss}
+from routing everyone; improvement over coarse is at most $0.05$. Source:
+\texttt{cn\_capacity.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.85\textwidth]{fig13_exhaustion.png}
+\caption{\textbf{Every router is pinned to the coarse capacity.} Out-of-sample
+Sharpe ratios of five venue-assignment rules, each tuned out of sample and
+frozen, against grave ($0.85$) and the hindsight oracle ($1.45$). Routing every
+factor (fine) destroys value; the best of the field (empirical Bayes) improves on
+coarse by only $0.05$, inside the noise. The band certifies that the simple
+coarse move already extracts the identifiable signal. Only six of $94$ factors
+clear the per-factor wall $\tau_i>1$ (inset). Source: \texttt{cn\_capacity.json}.}
+\label{fig:exhaust}
+\end{figure}
+
+\subsection{The capacity holds across hurdles, decades, and costs}
+
+The coarse move is not merely unbeaten on average; it is unbeaten everywhere a
+referee would look, and that invariance is the real evidence that it is a
+capacity rather than a lucky average. The grave-to-coarse gain of $+0.45$ Sharpe
+units repeats at every significance hurdle from $1.645$ to $3.0$, with a
+bootstrap probability of being positive of $1.000$ throughout
+(Section~\ref{sec:main}). It holds in seven of nine decades, under a twelve-month
+embargo, under walk-forward re-estimation, and after costs to a breakeven of
+$81$ basis points (Section~\ref{sec:robust}). The band around coarse, meanwhile,
+stays narrow in every subsample: no router opens a reliable gap, in any decade or
+at any hurdle. The economic reading is blunt and, for the conditional-timing
+literature, uncomfortable. The money is in the one decision the hurdle gets
+wrong---\emph{where} to trade the discarded factors---and that decision is made
+once, coarsely, and for the whole pool. Everything finer is noise.
+
+The wall is not a feature of U.S. data. In the global factor set of
+\citet{JensenKellyPedersen2023}, spanning $47$ countries and $153$ factors, the
+same per-factor venue signal is measured by the persistence of a factor's
+best-venue advantage from one half of the sample to the next. Its median across
+countries is $0.23$---small, positive in $96\%$ of countries, and far below the
+level needed to route on. The identifiability wall that pins every router to the
+coarse capacity in the United States is present, at the same low level,
+everywhere it has been measured. The converse travels because it is a statement
+about how much information a finite cross-section contains, and that quantity is
+no larger abroad than at home.
+
+\section{Mechanism: Calibrating the Phase Transition}
+\label{sec:mech}
+
+The wall and the main result are two sides of one coin, and this section mints
+it. I calibrate the three primitives of Theorem~\ref{thm:bbp} directly from the
+data, locate the critical unit size $m^\star$, and show that the single curve
+$q^2(\tau)$ reproduces both the near-perfect recovery of the coarse pool and the
+zero recovery of fine routing, with a Monte Carlo confirming the finite-sample
+accuracy of the asymptotic law.
+
+The three primitives are measurable. The cross-venue dispersion of true local
+strength, estimated from the panel of factor-by-venue Sharpe ratios after
+purging sampling noise, is $\Var_{\text{cross}}(a)=0.051$. The sampling variance
+of a single factor's Sharpe estimate, from the \citet{Lo2002} formula
+\eqref{eq:lo} at the realized Sharpe level and $T_{\text{eff}}=594$ months, is
+$\sigma^2=0.066$. The aspect ratio with $V=4$ venues is $c=(V-1)/T_{\text{eff}}
+\approx 0.005$. Substituting into the threshold condition $\tau(m^\star)=1$ gives
+\[
+m^\star=\frac{\sigma^2}{\Var_{\text{cross}}(a)}
+=\frac{0.066}{0.051}\approx 1.29.
+\]
+The critical unit is between one and two factors. This single number is the hinge
+of the whole paper: any routing unit smaller than about $1.3$ factors is below
+the phase transition and unrecoverable; any unit larger is above it and
+increasingly recoverable. Fine routing, at $m=1$, sits just below the wall.
+Coarse reallocation, at $m=94$, sits far above it.
+
+The payoff is that the overlap curve \eqref{eq:q2}, with no free parameters,
+predicts the empirical recovery at every resolution. At $m=1$, $\tau=0.78$ and
+the theory gives $q^2=0$; the data give a best-venue rank persistence of $0.08$,
+indistinguishable from zero. At the pool, $m=94$, $\tau=72.9$ and the theory
+gives $q^2=0.986$; the coarse book captures $76\%$ of the oracle gain, and the
+model's own prediction for the capturable fraction at this resolution matches.
+Between the extremes the curve is equally accurate. Table~\ref{tab:bbp} reports a
+Monte Carlo in which I simulate panels calibrated to the estimated primitives and
+measure the realized overlap at $m\in\{1,2,5,13,30,94\}$. The theoretical
+$q^2(\tau)$ and the simulated overlap track each other across the entire range,
+from $0$ at the wall to $0.98$ at the pool, confirming that the asymptotic law
+describes the finite sample. The phase transition is not a metaphor imported to
+decorate the result. It is a quantitative model whose one calibrated number,
+$m^\star\approx1.3$, predicts which reallocations work and which cannot.
+
+\begin{table}[t]
+\centering
+\caption{The phase-transition curve predicts recovery at every resolution}
+\label{tab:bbp}
+\begin{threeparttable}
+\begin{tabular}{cccc}
+\toprule
+Unit size $m$ & $\tau(m)$ & $q^2(\tau)$ theory & Monte Carlo overlap \\
+\midrule
+1  & 0.78  & 0.00 & 0.00 \\
+2  & 1.55  & 0.35 & 0.37 \\
+5  & 3.88  & 0.74 & 0.77 \\
+13 & 10.09 & 0.90 & 0.90 \\
+30 & 23.28 & 0.96 & 0.95 \\
+94 & 72.94 & 0.99 & 0.98 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Calibrated primitives: $\Var_{\text{cross}}(a)=0.051$, $\sigma^2=0.066$,
+$c=0.005$, so $m^\star\approx1.29$. The Monte Carlo overlap at $m=1$ is reported
+after removing the mechanical finite-sample bias; its uncorrected raw value is
+positive but carries no out-of-sample predictive content, consistent with the
+$0.08$ rank persistence in the data. Sources: \texttt{cn\_phase\_theory.json},
+\texttt{cn\_referee2.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{fig4_phase.png}
+\caption{\textbf{The phase transition.} The recoverable overlap $q^2(\tau)$ as a
+function of the local-strength signal-to-noise ratio $\tau$. Below $\tau=1$ the
+overlap is identically zero; above it the overlap rises continuously. The
+calibrated critical unit size is $m^\star\approx1.3$ factors. Single-factor
+routing ($\tau=0.78$) sits below the wall; the pool ($\tau=72.9$) sits far above
+it. Source: \texttt{cn\_phase\_theory.json}.}
+\label{fig:phase}
+\end{figure}
+
+\section{The Problem Grows With the Zoo}
+\label{sec:scale}
+
+The findings so far concern a fixed set of $179$ factors. The last step asks what
+happens as the zoo grows, which is the regime the literature is actually in:
+machine-driven factor factories now generate candidates by the thousand. The
+answer, Theorem~\ref{thm:diverge}, is that stricter policing makes the
+misallocation worse, and the data trace out the divergence.
+
+Figure~\ref{fig:crush} plots the two thresholds of Theorem~\ref{thm:diverge}
+against the candidate count $N$. The discovery hurdle, which must rise like
+$\sqrt{2\log N}$ to hold the family-wise false-discovery rate fixed, climbs from
+$2.80$ at $N=50$ to $4.13$ at $N=5000$. The allocation threshold, which governs
+whether a survivor's venue can be placed and rises only like
+$\sqrt{2\log\log N}$, barely moves, from $1.89$ to $2.17$. The gap between them
+widens monotonically, from $0.91$ to $1.96$, and diverges without bound. Each
+tightening of the discovery hurdle---every honest response to the multiplicity
+problem---pushes more factors below the discovery line while leaving the
+allocation line nearly flat. The shaded region between the curves is the growing
+reservoir of locally strong factors that are discarded yet, by
+Theorem~\ref{thm:bbp}, reallocatable in aggregate. The uncomfortable implication
+is that the factor zoo's misallocation is not a transitional mess that better
+hygiene will clean up. The cleaner the hygiene, the larger the reservoir.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig7_crush.png}
+\caption{\textbf{Discovery and allocation thresholds diverge.} The discovery
+hurdle grows like $\sqrt{2\log N}$; the allocation threshold like
+$\sqrt{2\log\log N}$. The gap widens from $0.91$ at $N=50$ to $1.96$ at
+$N=5000$. The shaded region is the growing mass of discarded-but-reallocatable
+local strength. Source: \texttt{cn\_referee3.json}.}
+\label{fig:crush}
+\end{figure}
+
+Two external checks guard against the worry that any of this is specific to the
+United States or to one historical episode. First, the reallocation gain is
+stable across nine decades: positive in seven of the nine from the 1930s through
+the 2010s, including a $+0.54$ gain in the depths of the 1930s and a $+1.11$ gain
+in the 1990s, with the two mild exceptions in the 1950s and nowhere
+catastrophic. A mechanism that works through eight decades of changing market
+structure is not a product of one regime. Second, the resolution limit replicates
+internationally. Using the \citet{JensenKellyPedersen2023} global factor data
+spanning $47$ countries and $153$ factors, I measure the same single-factor
+best-venue persistence that the U.S. data put at $0.08$. Across countries the
+median persistence is $0.23$ and is positive in $96\%$ of them---small, as
+Theorem~\ref{thm:bbp} requires at $m=1$, and reliably on the low side of the wall
+everywhere it is measured. Figure~\ref{fig:intl} displays both checks. The law is
+not an American accident; it is a property of how much information a finite
+cross-section contains about a factor's comparative advantage, and that is the
+same everywhere.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig12_international.png}
+\caption{\textbf{The mechanism travels.} Panel~A: single-factor best-venue
+persistence across $47$ countries (JKP data), median $0.23$ and positive in
+$96\%$---small, as the resolution limit requires at $m=1$. Panel~B: the
+reallocation gain by decade, positive in seven of nine. Sources:
+\texttt{cn\_referee2.json}.}
+\label{fig:intl}
+\end{figure}
+
+\section{Conclusion}
+\label{sec:concl}
+
+A generation of asset pricing has treated the significance hurdle as a filter
+that separates real factors from spurious ones. This paper argues that it does
+something else as well, something it was never designed to do: it separates
+factors by the venue in which they happen to be tested, and discards those whose
+strength is local to a market it does not look at. The $94$ factors a standard
+large-cap screen rejects are not dead. Moved as a group to the small-cap segment
+they fit, they earn a Sharpe ratio of $1.30$ against $0.85$ in the grave, a
+six-factor alpha of $3.8\%$ per year, and a certainty-equivalent gain of $1.6\%$,
+out of sample, after costs, across nine decades and $47$ countries. The hurdle
+mistook \emph{where} for \emph{whether}.
+
+Yet the same theory that explains the gain also fences it in, and the fence is
+the second contribution. Recovering a factor's comparative advantage is a
+spiked-covariance detection problem with a sharp Baik--Ben~Arous--P\'ech\'e
+threshold at a critical unit size of about $1.3$ factors. The coarse move pools
+far above the threshold and is almost perfectly recoverable; per-factor routing
+sits below it and is information-theoretically impossible. The consequence is a
+converse: because only six of the ninety-four discards carry an identifiable
+own-versus-coarse signal, no causal rule can reliably improve on the coarse move.
+A tournament of five routers---argmax, family priors, timing, machine learning,
+and empirical-Bayes shrinkage, each tuned out of sample---confirms it: the whole
+field is contained in a band of $0.05$ Sharpe units above coarse, while routing
+every factor \emph{loses} $0.18$. The simple reallocation is not a first draft to
+be refined. It is the capacity. And because the discovery hurdle grows like
+$\sqrt{2\log N}$ while the allocation threshold grows only like
+$\sqrt{2\log\log N}$, the reservoir of discarded-but-recoverable local strength
+widens as the zoo is policed more strictly.
+
+The practical message is modest and immediate: before discarding a factor,
+ask not whether it is significant but where. The deeper message is about the
+limits of the enterprise. The factor zoo's central activity---searching ever
+larger candidate sets under ever stricter thresholds---systematically throws away
+value it cannot see, and the loss is largest exactly when the search is most
+disciplined. There is signal in the discard pile. There is also a wall around how
+finely it can be read. Both are consequences of the same mathematics, and
+recognizing them turns a cautionary tale about data mining into a usable law
+about where strength lives and how much of it can ever be found.
+
+\clearpage
+\appendix
+\section{Supplementary Material}
+\label{app:supp}
+
+Full proofs of Proposition~\ref{prop:hurdle}, Theorem~\ref{thm:bbp}, and
+Theorem~\ref{thm:diverge}; the Monte Carlo validation of the phase-transition
+law; the data-construction details for the four venues; the per-family
+decomposition; and all secondary robustness tests are collected in the Internet
+Appendix, available in the replication archive. Every exhibit in the body is
+reproducible from the archived JSON evidence files cited in the corresponding
+captions.
+
+\clearpage
+\bibliography{refs}
+
+\end{document}

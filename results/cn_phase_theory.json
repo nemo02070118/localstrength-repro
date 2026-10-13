@@ -1,0 +1,26 @@
+{
+  "N_discarded": 94,
+  "T_eff_months": 594,
+  "baseline_battlefield": "wide",
+  "n_alt_battlefields": 3,
+  "var_cross_advantage": 0.05083553153137663,
+  "sigma2_single": 0.0655100726534598,
+  "c_aspect": 0.005050505050505051,
+  "m_star_tau1": 1.2886670145865549,
+  "predicted": {
+    "single (m=1)": {
+      "tau": 0.7759956518486908,
+      "q2": 0.0
+    },
+    "family (m~13)": {
+      "tau": 10.087943474032981,
+      "q2": 0.9004209744766171
+    },
+    "pool (m=N)": {
+      "tau": 72.94359127377693,
+      "q2": 0.9862224918717787
+    }
+  },
+  "empirical_single_residual_rho": 0.07749963079252058,
+  "note": "q2 at pool resolution ~ coarse capture; q2 at single ~ 0 ~ rho"
+}

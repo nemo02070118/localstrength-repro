@@ -1,0 +1,27 @@
+{
+  "alpha191": {
+    "source": "Guotai Junan Securities 2017 research report (191 formulaic alphas)",
+    "n_evaluable": 160,
+    "citable": true
+  },
+  "alpha101": {
+    "source": "Kakushadze 2016, 101 Formulaic Alphas (Wilmott)",
+    "n_evaluable": 69,
+    "citable": true
+  },
+  "machine_factory": {
+    "source": "BOT-fX Rust symbolic search engine admitted.jsonl",
+    "n_total": 7384,
+    "n_evaluable": 6960,
+    "citable": "internal engine, described in paper"
+  },
+  "regsho_pilot": {
+    "source": "SEC Release 34-50104 Appendix A",
+    "n_tickers": 985,
+    "use": "2005 pilot treatment window; DID at borrow-cost-tercile level on OSAP because factor legs are LS spreads, not permno-linkable stocks (disclosed)"
+  },
+  "13f_institutional": {
+    "status": "NOT OBTAINABLE at factor-leg level",
+    "reason": "OSAP legs are anomaly long-short spreads with no permno linkage; factor-level 13F holdings cannot be constructed. Use return-based corr-to-book crowding proxy, disclosed as such."
+  }
+}

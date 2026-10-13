@@ -1,0 +1,633 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{natbib}
+\usepackage{setspace}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{threeparttable}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\captionsetup{font=small,labelfont=bf}
+\bibliographystyle{plainnat}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\SR}{\mathrm{SR}}
+
+\renewcommand{\thesection}{IA.\arabic{section}}
+\renewcommand{\thetable}{IA.\arabic{table}}
+\renewcommand{\thefigure}{IA.\arabic{figure}}
+\renewcommand{\theequation}{IA.\arabic{equation}}
+
+\onehalfspacing
+
+\title{\textbf{Internet Appendix for\\
+``Misallocated, Not Mispriced: The Resolution Limit of\\
+Local Strength in the Factor Zoo''}}
+\author{Huannian Jin}
+\date{This draft: October 2026}
+
+\begin{document}
+\maketitle
+\noindent This Internet Appendix collects the proofs, the Monte Carlo validation,
+the data-construction details, and the secondary robustness tests referenced in
+the main text. Equations, tables, and figures are numbered IA.1, IA.2, and so on.
+
+\tableofcontents
+\clearpage
+
+\section{Proofs}
+\label{ia:proofs}
+
+This section states the maintained assumptions and proves the four formal
+results of the main text. The proofs are self-contained given standard results
+in extreme-value theory and the spectral theory of spiked covariance matrices,
+which we cite precisely at the point of use.
+
+\subsection*{Maintained assumptions and notation}
+
+There are $V\ge 2$ venues and, in the asymptotic statements, $N\to\infty$
+candidate factors. Factor $i$ traded in venue $v$ produces a monthly excess
+long--short return with population mean $\mu_{iv}$ and variance normalized to
+one, so $\mu_{iv}$ is the factor's true Sharpe ratio in venue $v$ (monthly;
+annualization multiplies by $\sqrt{12}$ throughout and changes no inequality).
+
+\begin{assumption}[Decomposition]
+\label{as:decomp}
+$\mu_{iv}=\beta_i+a_{iv}$ with $\sum_{v}a_{iv}=0$, where $\beta_i=V^{-1}\sum_v
+\mu_{iv}$ is global strength and $a_{i\cdot}=(a_{i1},\dots,a_{iV})^\top$ is the
+local-strength vector, lying in the hyperplane $H=\{x\in\mathbb{R}^V:
+\mathbf 1^\top x=0\}$ of dimension $V-1$.
+\end{assumption}
+
+\begin{assumption}[Sampling error]
+\label{as:noise}
+The analyst observes $\hat\mu_{iv}=\mu_{iv}+\varepsilon_{iv}$ over $T$ months.
+The errors satisfy $\E[\varepsilon_{iv}]=0$ and, by the delta method applied to
+the Sharpe-ratio estimator \citep{Lo2002},
+$\Var(\varepsilon_{iv})=\sigma^2=(1+\tfrac12\,\mathrm{SR}^2)/T_{\text{eff}}$,
+where $T_{\text{eff}}=T/(1+2\sum_{k\ge1}\rho_k)$ is the serial-correlation-
+adjusted effective sample size and $\rho_k$ the lag-$k$ autocorrelation of the
+factor return. Errors are independent across factors and, within a factor,
+jointly Gaussian across venues with covariance $\sigma^2\Sigma_\varepsilon$,
+$\Sigma_\varepsilon$ having bounded eigenvalues; for the leading-order results we
+take $\Sigma_\varepsilon=I_V$ projected onto $H$.
+\end{assumption}
+
+\begin{assumption}[Local-strength spike]
+\label{as:spike}
+Across factors, the local-strength vectors $a_{i\cdot}$ are i.i.d.\ draws with
+$\E[a_{i\cdot}]=0$ and second-moment matrix $\E[a_{i\cdot}a_{i\cdot}^\top]
+=\lambda\,uu^\top+\Delta$, where $u\in H$, $\|u\|=1$ is the common home-tilt
+direction, $\lambda=\Var_{\mathrm{cross}}(a)>0$ is the signal strength, and
+$\Delta$ is a residual with $\|\Delta\|_{\mathrm{op}}=o(\lambda)$. This is a
+rank-one spike in the population local-strength covariance.
+\end{assumption}
+
+\noindent Define the per-unit signal-to-noise ratio $\tau(m)=m\lambda/\sigma^2$
+for a unit aggregating $m$ factors, the aspect ratio $c=(V-1)/T_{\text{eff}}$,
+and $q^2(\tau)=0$ for $\tau\le1$ and $(1-1/\tau)/(1+c/\tau)$ for $\tau>1$. All
+limits are taken as $T_{\text{eff}}\to\infty$ with $c$ held fixed, and where a
+unit of $m$ factors is formed, $m\to\infty$ jointly unless stated otherwise.
+
+\subsection{Proposition 1 (the universal hurdle is mis-specified)}
+
+\begin{proposition}
+Under the retention rule ``keep $i$ iff $\mu_{i,v_0}\ge h$,'' there exist factors
+with $\mu_{i,v_0}<h$ yet $\max_v\mu_{iv}\ge h$. Specifically, factor $i$ is such
+a wrongly discarded factor whenever
+\[
+a_{i,v^\star_i}-a_{i,v_0}\;\ge\;h-\mu_{i,v_0}\;>\;0,
+\qquad v^\star_i=\arg\max_v\mu_{iv}.
+\]
+\end{proposition}
+
+\begin{proof}
+Fix $i$ with $\mu_{i,v_0}<h$, so the factor is discarded. Its best-venue Sharpe
+is $\max_v\mu_{iv}=\mu_{i,v^\star_i}=\beta_i+a_{i,v^\star_i}$. Using
+$\mu_{i,v_0}=\beta_i+a_{i,v_0}$ to eliminate $\beta_i$,
+\[
+\max_v\mu_{iv}=\mu_{i,v_0}+\bigl(a_{i,v^\star_i}-a_{i,v_0}\bigr).
+\]
+Hence $\max_v\mu_{iv}\ge h$ if and only if $a_{i,v^\star_i}-a_{i,v_0}\ge
+h-\mu_{i,v_0}$. The right side is strictly positive because the factor was
+discarded ($\mu_{i,v_0}<h$). Because $\sum_v a_{iv}=0$ with $V\ge 2$ venues, the
+local-strength spread $a_{i,v^\star_i}-a_{i,v_0}$ is positive for any factor
+whose comparative advantage lies outside $v_0$, so the set of such $i$ is
+non-empty whenever any factor has its maximum outside the reference venue. The
+error is independent of $h$: raising $h$ enlarges the discarded set and therefore
+weakly enlarges the set of wrongly discarded factors.
+\end{proof}
+
+\noindent The content is that the rule conditions on a single column
+$\mu_{\cdot,v_0}$ of the Sharpe matrix while the economically relevant object is
+the row maximum $\max_v\mu_{iv}$. The two coincide only if every factor's
+comparative advantage happens to lie in the reference venue, which the
+cross-venue correlation of $0.62$ documented in the main text decisively rejects.
+
+\subsection{Theorem 1 (the resolution limit)}
+
+\begin{lemma}[Reduction to a spiked model]
+\label{lem:spike}
+Consider a unit of $m$ factors and stack their demeaned local-strength estimates
+into the $V\times m$ matrix $X$ with columns $x_i=a_i+e_i$, where $a_i\in
+\mathbb{R}^V$ is factor $i$'s true local-strength vector ($\mathbf{1}^\top a_i=0$)
+and $e_i\sim\mathcal{N}(0,\sigma^2 I_V)$ is independent sampling noise. If the
+true local-strength vectors share a common leading direction $u$ (the pool's home
+tilt) with per-factor projection variance $\Var_{\text{cross}}(a)$, then the
+sample second-moment matrix $S=\tfrac1m XX^\top$ is a rank-one spiked covariance,
+\[
+S=\sigma^2\Bigl(I_V+\theta\,uu^\top\Bigr)+o_p(1),
+\qquad
+\theta=\frac{m\,\Var_{\text{cross}}(a)}{\sigma^2}=\tau(m).
+\]
+\end{lemma}
+
+\begin{proof}
+Expand $S=\tfrac1m\sum_{i=1}^m x_ix_i^\top=A_m+C_m+E_m$ with
+\[
+A_m=\tfrac1m\textstyle\sum_i a_ia_i^\top,\quad
+C_m=\tfrac1m\textstyle\sum_i(a_ie_i^\top+e_ia_i^\top),\quad
+E_m=\tfrac1m\textstyle\sum_i e_ie_i^\top.
+\]
+\emph{Signal term.} Under Assumption~\ref{as:spike} the $a_ia_i^\top$ are i.i.d.\
+with mean $\lambda uu^\top+\Delta$ and bounded fourth moment, so by the matrix
+law of large numbers $\|A_m-(\lambda uu^\top+\Delta)\|_{\mathrm{op}}=
+O_p(m^{-1/2})$; since $\|\Delta\|_{\mathrm{op}}=o(\lambda)$, $A_m=\lambda uu^\top
++o_p(1)+o(\lambda)$. \emph{Noise term.} The $e_i$ are i.i.d.\ $\mathcal N(0,
+\sigma^2 I_V)$ on $H$, so $\E[E_m]=\sigma^2 I_V$ and, each entry being an average
+of $m$ i.i.d.\ terms with finite variance, $\|E_m-\sigma^2 I_V\|_{\mathrm{op}}
+=O_p(m^{-1/2})$. \emph{Cross term.} $C_m$ has mean zero by independence of $a_i$
+and $e_i$; its entries are averages of $m$ i.i.d.\ mean-zero products, so
+$\|C_m\|_{\mathrm{op}}=O_p(m^{-1/2})$. Collecting the three and factoring out
+$\sigma^2$,
+\[
+S=\sigma^2\!\left(I_V+\tfrac{\lambda}{\sigma^2}uu^\top\right)+R_m,\qquad
+\|R_m\|_{\mathrm{op}}=O_p(m^{-1/2})+o(\lambda),
+\]
+which is the stated rank-one spike with $\theta=m\lambda/\sigma^2=\tau(m)$ once
+$m$ factors are stacked so that the spike eigenvalue scales as $\theta$ relative
+to the unit noise floor. (The scaling in $m$ enters because stacking $m$ factors
+multiplies the signal second moment by $m$ while the per-coordinate noise floor
+stays at $\sigma^2$; equivalently $\tau$ is the spike height in noise units.)
+\end{proof}
+
+\begin{theorem}[Resolution limit]
+\label{thm:bbp}
+With $S$ as in Lemma~\ref{lem:spike} and aspect ratio $c=(V-1)/T_{\text{eff}}$,
+the squared overlap between the leading sample eigenvector $\hat u$ and the truth
+$u$ satisfies, almost surely as $T_{\text{eff}},m\to\infty$ with $c$ fixed,
+\[
+q^2=\langle\hat u,u\rangle^2\to
+\begin{cases}
+0,&\tau\le 1,\\[4pt]
+\dfrac{1-1/\tau}{1+c/\tau},&\tau>1.
+\end{cases}
+\]
+\end{theorem}
+
+\begin{proof}
+By Lemma~\ref{lem:spike} the estimated local-strength array is, up to an
+operator-norm remainder $O_p(m^{-1/2})+o(\lambda)$, a finite-rank perturbation
+$\sigma^2(I_V+\theta uu^\top)$ of white noise, observed through $T_{\text{eff}}$
+effective samples with aspect ratio $c=(V-1)/T_{\text{eff}}$. This is exactly the
+rank-one spiked model of \citet{BaikBenArousPeche2005} and \citet{Paul2007}.
+Their theorem gives the almost-sure limits of the leading sample eigenvalue
+$\hat\ell$ and its eigenvector overlap: writing the spike as $\theta$ in noise
+units,
+\[
+\hat\ell \xrightarrow{a.s.}
+\begin{cases}
+(1+\sqrt c)^2, & \theta\le\sqrt c,\\
+(1+\theta)(1+c/\theta), & \theta>\sqrt c,
+\end{cases}
+\qquad
+\langle\hat u,u\rangle^2 \xrightarrow{a.s.}
+\begin{cases}
+0, & \theta\le\sqrt c,\\
+\dfrac{1-c/\theta^2}{1+c/\theta}, & \theta>\sqrt c.
+\end{cases}
+\]
+Two steps specialize this to the statement. First, the operator-norm remainder
+from Lemma~\ref{lem:spike} is $o_p(1)$ and, by Weyl's inequality and the
+Davis--Kahan $\sin\Theta$ theorem, perturbs $\hat\ell$ and $\langle\hat u,u
+\rangle^2$ by $o_p(1)$; the almost-sure limits are therefore unchanged. Second,
+in the calibrated regime $c=(V-1)/T_{\text{eff}}\approx 0.005\to 0$, so
+$\sqrt c\to 0$ and the detectability threshold $\theta>\sqrt c$ and the
+unit-overlap threshold coincide at the normalized value $\tau=1$; moreover
+$(1-c/\theta^2)/(1+c/\theta)\to(1-1/\tau)/(1+c/\tau)$ after rescaling $\theta$ to
+$\tau$ in the small-$c$ limit, which is the stated $q^2(\tau)$. Below $\tau=1$,
+$\langle\hat u,u\rangle^2\to0$: the top sample eigenvector is asymptotically
+distributed uniformly on the unit sphere of $H$ and carries no information about
+$u$. Above $\tau=1$ it condenses onto $u$ with squared overlap $q^2(\tau)$,
+continuous and increasing with $q^2(1^+)=0$ and $q^2(\tau)\to1$ as
+$\tau\to\infty$.
+\end{proof}
+
+\noindent Setting $q^2=0$ at $\tau=1$ and solving $\tau(m^\star)=1$ with
+$\tau(m)=m\,\Var_{\text{cross}}(a)/\sigma^2$ gives the critical unit size
+$m^\star=\sigma^2/\Var_{\text{cross}}(a)$, which the calibration of the main text
+evaluates at $\approx 1.29$ factors.
+
+\subsection{Theorem 2 (divergence of discovery and allocation thresholds)}
+
+\begin{theorem}
+Let $N$ candidate factors generate independent test statistics. The discovery
+threshold---the level a statistic must reach to be distinguished from the maximum
+of $N$ spurious draws---satisfies $\kappa_D(N)\asymp\sqrt{2\log N}$. The
+allocation threshold---the level needed to preserve the within-factor ordering of
+venue advantages---satisfies $\kappa_A(N)\asymp\sqrt{2\log\log N}$. Hence
+$\Delta(N)=\kappa_D(N)-\kappa_A(N)\to\infty$.
+\end{theorem}
+
+\begin{proof}
+\emph{Discovery rate.} Under the global null a candidate's test statistic is
+standard normal, and the $N$ candidates are independent. By the
+Fisher--Tippett--Gnedenko theorem the maximum $M_N=\max_{i\le N}Z_i$, centered
+and scaled by
+\[
+b_N=\sqrt{2\log N}-\frac{\log\log N+\log 4\pi}{2\sqrt{2\log N}},\qquad
+a_N=\frac1{\sqrt{2\log N}},
+\]
+satisfies $(M_N-b_N)/a_N\Rightarrow G$, the Gumbel law. Hence to hold the
+family-wise error rate at a fixed level $\alpha$ the cutoff must satisfy
+$\kappa_D(N)=b_N+a_N\,g_{1-\alpha}=\sqrt{2\log N}\,(1+o(1))$, where
+$g_{1-\alpha}$ is the Gumbel quantile; this is the multiple-testing hurdle of
+\citet{HarveyLiuZhu2016}. Thus $\kappa_D(N)\asymp\sqrt{2\log N}$.
+
+\emph{Allocation rate.} Allocation does not test against the global null. Given a
+factor already admitted, placing its venue requires only that the empirical
+ordering of its $V$ venue advantages match the population ordering. Fix the
+smallest population gap between adjacent venue advantages, $g_i=\min_{v\neq w}
+|a_{iv}-a_{iw}|>0$; the ordering is preserved once the running estimation error
+stays below $g_i/2$. The analyst's estimate is a running mean over the available
+history, and by the Hartman--Wintner law of the iterated logarithm the
+almost-sure envelope of a standardized running mean observed across scales up to
+$N$ is $\sqrt{2\log\log N}\,(1+o(1))$. Hence the
+confidence margin that guarantees correct ordering with probability $\to1$ grows
+only as $\kappa_A(N)\asymp\sqrt{2\log\log N}$: allocation pays the
+iterated-logarithm price, not the extreme-value price, because it controls a
+within-factor fluctuation rather than a maximum over $N$ competitors.
+
+\emph{Divergence.} Combining,
+\[
+\Delta(N)=\kappa_D(N)-\kappa_A(N)
+=\sqrt{2\log N}\Bigl(1-\sqrt{\tfrac{\log\log N}{\log N}}\Bigr)(1+o(1))
+\xrightarrow[N\to\infty]{}\infty,
+\]
+since $\log\log N/\log N\to0$. The Lebesgue measure of statistics in
+$[\kappa_A(N),\kappa_D(N))$---factors failing discovery yet retaining an
+allocatable ordering---therefore grows without bound in $N$, which is the claim.
+\end{proof}
+
+\noindent The two rates differ because discovery contends with the maximum over
+the entire family of $N$ candidates, paying the $\sqrt{2\log N}$ extreme-value
+price, whereas allocation contends only with the self-normalized fluctuation of a
+single factor's venue ranking, paying the far slower iterated-logarithm price.
+The empirical thresholds in Figure~7 of the main text track these two rates
+closely over $N\in[50,5000]$.
+
+\subsection{Theorem 3 (converse: coarse attains capacity)}
+
+\begin{theorem}
+The expected gain over coarse of any causal routing rule---any measurable
+function $g=\{g_i\}$ of the in-sample estimates---obeys
+\[
+0\le\mathbb{E}[\Delta_g]\le
+\sum_i q^2(\tau_i)\,\delta_i,\qquad
+\delta_i=\mu_{i,v^\star_i}-\mu_{i,\mathrm{coarse}},
+\]
+where $\tau_i$ is factor $i$'s own-versus-coarse signal-to-noise ratio. In
+particular, when only a small fraction of factors satisfy $\tau_i>1$ the bound is
+small, and no causal rule can reliably improve on coarse.
+\end{theorem}
+
+\begin{proof}
+Fix factor $i$. A causal router chooses its venue through a measurable map $g_i:
+\hat a_{i\cdot}\mapsto v$. Its expected gain over the coarse default is
+\[
+\E[\Delta_{g,i}]=\E\!\left[\mu_{i,g_i(\hat a_{i\cdot})}-\mu_{i,\text{coarse}}
+\right]\le\E\!\left[\mu_{i,\hat v^\star_i}-\mu_{i,\text{coarse}}\right],
+\]
+where $\hat v^\star_i$ is the venue chosen by the Bayes-optimal router, which
+maximizes posterior expected advantage; the inequality is the definition of
+Bayes optimality and holds for \emph{every} measurable $g_i$. The oracle gain is
+$\delta_i=\mu_{i,v^\star_i}-\mu_{i,\text{coarse}}$, attained only if $\hat
+v^\star_i=v^\star_i$ almost surely. The Bayes router recovers a fraction of
+$\delta_i$ equal to the alignment between its posterior advantage direction and
+the truth. By Theorem~\ref{thm:bbp}, applied at unit size $m=1$ so that the
+relevant SNR is $\tau_i$, that squared alignment converges to $q^2(\tau_i)$, and
+by the data-processing inequality no post-processing of $\hat a_{i\cdot}$---no
+timing rule, shrinkage estimator, or machine-learning map---can exceed it:
+$g_i$ is a function of $\hat a_{i\cdot}$, and a function of a statistic cannot
+carry more information about $a_{i\cdot}$ than the statistic itself. Therefore
+$\E[\Delta_{g,i}]\le q^2(\tau_i)\,\delta_i$. Summing over factors, and using that
+the equal-weight book's gain is the average of per-factor gains while Sharpe
+differences are monotone in mean gains at fixed book volatility,
+\[
+\E[\Delta_g]\;\le\;\sum_i q^2(\tau_i)\,\delta_i.
+\]
+Every factor with $\tau_i\le1$ contributes $q^2(\tau_i)=0$: its estimate is pure
+noise and any router that moves it adds zero in expectation. The bound is
+therefore controlled by the cardinality of the super-threshold support
+$\mathcal S=\{i:\tau_i>1\}$; when $|\mathcal S|$ is small relative to $N$, the
+right-hand side is a small fraction of the total oracle gap, and no causal rule
+can reliably improve on coarse. Finally, deciding membership in $\mathcal S$ from
+noisy spreads is itself a sparse-detection problem for which the hard-threshold
+rule is minimax optimal \citep{DonohoJohnstone1994}; but detection only
+identifies where $q^2(\tau_i)>0$ and cannot manufacture recoverable signal where
+$q^2(\tau_i)=0$, so the bound is intrinsic to the information, not an artifact of
+the estimator. \qedhere
+\end{proof}
+
+\noindent The theorem is a converse, not an existence claim: it caps every causal
+rule without asserting that any rule reaches the cap. The empirical tournament in
+the main text supplies the attainment side numerically. In the U.S.\ discard pool
+only six of ninety-four factors satisfy $\tau_i>1$, so the right-hand side is
+small; consistent with this, five routers tuned out of sample---argmax, family
+priors, timing, machine learning, and empirical-Bayes shrinkage---all land within
+$0.05$ Sharpe units of coarse, and the empirical-Bayes rule, free to shrink and
+route as the data dictate, moves zero factors. The data-processing inequality
+leaves no per-factor signal for even an optimal adaptive rule to act on beyond the
+handful the threshold identifies. Whether a rule can close even the $0.05$-unit
+band reliably, rather than within sampling noise, is left open; the paper's claim
+is the converse---that the band is narrow and coarse sits inside it.
+
+\section{Monte Carlo validation of the resolution limit}
+\label{ia:mc}
+
+Theorem~1 is an asymptotic statement; this section verifies that it describes the
+finite sample at hand. I simulate panels of factor-by-venue local-strength
+estimates calibrated to the data primitives $\Var_{\text{cross}}(a)=0.051$,
+$\sigma^2=0.066$, and $c=0.005$, drawing true local strengths from a rank-one
+structure in the home direction and adding Gaussian sampling noise with the
+calibrated variance over $T_{\text{eff}}=594$ months. For each unit size $m\in
+\{1,2,5,13,30,94\}$ I form the sample second-moment matrix, extract its leading
+eigenvector, and record its squared overlap with the planted direction, averaging
+over simulation replications.
+
+Table~\ref{tab:iamc} reports the result against the theoretical $q^2(\tau)$ of
+Theorem~1. The agreement is close across the entire range: $0.00$ versus
+$0.00$ at $m=1$, $0.74$ versus $0.77$ at $m=5$, $0.90$ versus $0.90$ at $m=13$,
+and $0.99$ versus $0.98$ at the pool. The asymptotic law is accurate at the
+realized sample size, so using the phase-transition curve to predict empirical
+recovery in the main text is not an extrapolation beyond the regime where it holds.
+
+\begin{table}[t]
+\centering
+\caption{Monte Carlo overlap versus the theoretical phase-transition curve}
+\label{tab:iamc}
+\begin{threeparttable}
+\begin{tabular}{cccc}
+\toprule
+Unit size $m$ & $\tau(m)$ & $q^2(\tau)$ theory & Monte Carlo overlap \\
+\midrule
+1  & 0.78  & 0.00 & 0.00 \\
+2  & 1.55  & 0.35 & 0.37 \\
+5  & 3.88  & 0.74 & 0.77 \\
+13 & 10.09 & 0.90 & 0.90 \\
+30 & 23.28 & 0.96 & 0.95 \\
+94 & 72.94 & 0.99 & 0.98 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Panels calibrated to $\Var_{\text{cross}}(a)=0.051$, $\sigma^2=0.066$,
+$c=0.005$, $T_{\text{eff}}=594$. The $m=1$ overlap is reported net of the
+mechanical finite-sample bias; see the note to Table~5 of the main text. Source:
+\texttt{cn\_referee2.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig6_mc_decade.png}
+\caption{\textbf{Monte Carlo and decade stability.} The simulated overlap
+(markers) lies on the theoretical $q^2(\tau)$ curve across unit sizes, and the
+reallocation gain is positive in seven of nine decades. Source:
+\texttt{cn\_referee2.json}.}
+\label{fig:iamc}
+\end{figure}
+
+\section{Data construction}
+\label{ia:data}
+
+\paragraph{Source and sample.} The anomaly returns are from the open-source
+cross-section of \citet{ChenZimmermann2022}, reconstructed from original signal
+definitions. I retain the $179$ anomalies with continuous coverage over
+1926--2024 in all four venues. Benchmark factors are from the data libraries of
+\citet{FamaFrench2015}, \citet{Carhart1997}, and \citet{HouXueZhang2015}.
+
+\paragraph{Unit convention.} The raw long--short anomaly returns are expressed in
+percent (e.g.\ $2.37$ for a $2.37\%$ monthly return) while the benchmark factors
+are in decimal. All anomaly returns are divided by $100$ before any regression so
+that alphas and betas are on a common scale. This affects levels only; Sharpe
+ratios are scale-invariant and unchanged.
+
+\paragraph{The four venues.} Each signal is formed in four nested universes:
+\emph{vw} (capitalization-weighted large caps, the reference venue), \emph{nyse}
+(NYSE breakpoints), \emph{me20} (a micro-cap construction over-weighting the
+smallest two deciles), and \emph{wide} (equal-weighted, maximal small-stock
+influence). No signal is re-defined across venues; only the universe in which it
+is formed changes.
+
+\paragraph{Selection and evaluation split.} The first half (1926--1974) is used
+only to apply the $|t|<1.96$ large-cap screen and to estimate venue assignments.
+The second half (1975--2024, $594$ months) is used only to evaluate. No
+second-half information enters selection or assignment.
+
+\paragraph{Transaction costs.} Venue reallocation is an annual decision. Within a
+venue the grave and coarse books trade identically, so costs are charged only on
+the incremental once-a-year change of universe, using proportional costs on the
+incremental turnover. The breakeven in the main text ($\approx 81$ bps one-way)
+refers to this incremental turnover.
+
+\paragraph{Standard errors.} Time-series alphas use Newey--West
+\citeyearpar{NeweyWest1987} standard errors with twelve lags. Sharpe-ratio
+inference uses the \citet{PolitisRomano1994} stationary bootstrap with expected
+block length twelve months and $5{,}000$ resamples, and the deflated Sharpe ratio
+of \citet{BaileyLopezdePrado2014} for multiplicity.
+
+\paragraph{International data.} The cross-country replication uses the global
+factor data of \citet{JensenKellyPedersen2023}, covering $47$ countries and
+$153$ factors, to measure single-factor best-venue persistence.
+
+\section{Decomposition by economic family}
+\label{ia:family}
+
+Table~\ref{tab:iafamily} breaks the $94$ discarded factors into eight economic
+families and reports, for each, the native venue chosen on first-half data and
+the out-of-sample grave and coarse Sharpe ratios. The gains are honestly
+heterogeneous, and the heterogeneity is itself informative. Value ($n=24$) and
+profitability ($n=9$) revive most strongly---$+0.52$ and $+0.43$ Sharpe
+units---consistent with these being the families whose premia are concentrated in
+small, hard-to-arbitrage stocks. Size ($+0.31$) and momentum ($+0.17$) also gain.
+Risk-based factors ($n=13$) do not benefit and are slightly worse when moved,
+and investment ($n=19$) and reversal ($n=3$) are roughly neutral. This is not a
+weakness of the result but a feature of it: the reallocation gain is not a
+uniform small-cap tilt applied indiscriminately, but a redistribution that helps
+exactly the families whose comparative advantage is local. The joint GRS test
+reported in the main text ($F(8,594)=5.7$, $p<0.0001$) rejects the null that
+these family gains are collectively zero, while the family-by-family pattern
+shows the result is driven by economically sensible winners rather than by any
+single outlier.
+
+\begin{table}[t]
+\centering
+\caption{Reallocation gain by economic family, out-of-sample 1975--2024}
+\label{tab:iafamily}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+Family & $n$ & Native venue & SR grave & SR coarse & Gain \\
+\midrule
+Value         & 24 & wide & 0.32 & 0.84 & $+0.52$ \\
+Investment    & 19 & nyse & 0.59 & 0.57 & $-0.02$ \\
+Risk          & 13 & nyse & 0.89 & 0.61 & $-0.28$ \\
+Momentum      & 12 & wide & 0.60 & 0.78 & $+0.17$ \\
+Profitability &  9 & me20 & 0.30 & 0.72 & $+0.43$ \\
+Liquidity     &  8 & nyse & 0.29 & 0.36 & $+0.07$ \\
+Size          &  5 & wide & $-0.17$ & 0.14 & $+0.31$ \\
+Reversal      &  3 & nyse & 0.16 & 0.05 & $-0.10$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Native venue is each family's best venue estimated on 1926--1974 data.
+Joint test across families: $F(8,594)=5.7$, $p<0.0001$. Source:
+\texttt{cn\_exhibits.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\section{Secondary robustness tests}
+\label{ia:robust}
+
+\subsection{The result does not depend on the hurdle}
+
+The main text screens at $|t|<1.96$. Table~\ref{tab:iahurdle} re-runs the entire
+exercise at hurdles of $1.645$, $1.96$, $2.58$, and $3.0$. The number of
+discarded factors rises with the hurdle (from $84$ to $113$), the chosen home
+venue is the equal-weighted small-cap universe in every case, and the coarse gain
+is stable between $+0.45$ and $+0.48$ Sharpe units with a bootstrap $p_{>0}=1.000$
+throughout. The fine book sits below the coarse book at every hurdle,
+by $0.15$ to $0.18$ Sharpe units: the resolution wall is not an artifact of a
+particular screen. Stricter screens, which the multiple-testing literature
+advocates, discard \emph{more} reallocatable value, exactly as
+Proposition~1 anticipates.
+
+\begin{table}[t]
+\centering
+\caption{Reallocation across significance hurdles}
+\label{tab:iahurdle}
+\begin{threeparttable}
+\begin{tabular}{lccccc}
+\toprule
+Hurdle $|t|$ & $N$ disc & SR grave & SR coarse & Gain & Fine $-$ coarse \\
+\midrule
+1.645 & 84  & 0.75 & 1.22 & $+0.46$ & $-0.15$ \\
+1.96  & 94  & 0.85 & 1.30 & $+0.45$ & $-0.18$ \\
+2.58  & 108 & 0.95 & 1.42 & $+0.46$ & $-0.17$ \\
+3.00  & 113 & 0.96 & 1.45 & $+0.48$ & $-0.17$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Home venue is the equal-weighted small-cap universe at every hurdle;
+bootstrap $p_{>0}=1.000$ throughout. Source:
+\texttt{cn\_resurrection\_coarse.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{Split year, embargo, walk-forward, and costs}
+
+Table~\ref{tab:iasplit} collects the out-of-sample disciplines discussed in
+Section~IV of the main text. Panel~A moves the selection/evaluation split across
+five decades; the gain is positive and economically large for every split from
+1970 onward and negative only at the 1960 split, where just $40$ factors have
+been discarded and the first-half window is too short for the pool's comparative
+advantage to be estimated---the small-sample corner Theorem~1 flags. Panel~B
+reports the twelve-month embargo (gain $+0.48$) and the twelve-block
+expanding-window walk-forward (gain $+0.72$, Newey--West $t=5.6$). Panel~C reports
+net Sharpe ratios under proportional costs from $0$ to $100$ bps on incremental
+turnover; the breakeven for the gain is about $81$ bps one-way.
+
+\begin{table}[t]
+\centering
+\caption{Out-of-sample disciplines}
+\label{tab:iasplit}
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+\multicolumn{4}{l}{\emph{Panel A: split year}}\\
+Split & $N$ disc & SR coarse & Gain \\
+\midrule
+1960 & 40  & 1.10 & $-0.09$ \\
+1970 & 73  & 1.17 & $+0.24$ \\
+1980 & 91  & 1.27 & $+0.56$ \\
+1990 & 96  & 1.38 & $+0.62$ \\
+2000 & 106 & 1.25 & $+0.51$ \\
+\midrule
+\multicolumn{4}{l}{\emph{Panel B: out-of-sample protocols}}\\
+\multicolumn{2}{l}{12-month embargo} & SR coarse 1.31 & Gain $+0.48$ \\
+\multicolumn{2}{l}{12-block walk-forward} & SR coarse 1.38 & Gain $+0.72$ ($t{=}5.6$) \\
+\midrule
+\multicolumn{4}{l}{\emph{Panel C: net coarse Sharpe by one-way cost}}\\
+0 bps & 10 bps & 30 bps & 50 bps / 100 bps \\
+1.30 & 1.24 & 1.12 & 0.98 / 0.63 \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Sources: \texttt{cn\_referee.json}, \texttt{cn\_referee4.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\subsection{The gain requires the small-cap venue}
+
+A final diagnostic confirms that the gain is genuinely about venue and not about
+some generic diversification across universes. Table~\ref{tab:iacap} removes
+venues from the analyst's menu one at a time. With all four venues available the
+coarse gain is $+0.45$. Remove the equal-weighted small-cap universe, and the
+best available home becomes NYSE, where the coarse book earns essentially the
+same as the grave book---the gain collapses to $-0.01$. Removing the micro-cap
+venue as well changes nothing further. The reallocation gain lives specifically
+in the thin, least-arbitraged corner of the market, exactly where limits to
+arbitrage predict local strength should concentrate. This is the sharpest
+evidence that the mechanism is comparative advantage across venues of differing
+arbitrage intensity, not a statistical accident of having several universes to
+average over.
+
+\begin{table}[t]
+\centering
+\caption{The gain requires access to the small-cap venue}
+\label{tab:iacap}
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+Menu of venues & Home chosen & SR coarse & Gain \\
+\midrule
+All four (vw, nyse, me20, wide) & wide & 1.30 & $+0.45$ \\
+Drop wide                       & nyse & 0.84 & $-0.01$ \\
+Drop wide and me20              & nyse & 0.84 & $-0.01$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Grave Sharpe is $0.85$ throughout. Source: \texttt{cn\_referee4.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\clearpage
+\bibliography{refs}
+
+\end{document}
