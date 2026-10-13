@@ -80,14 +80,15 @@ random matrix theory, phase transition, limits to arbitrage.\\
 \section*{Introduction}
 \addcontentsline{toc}{section}{Introduction}
 
-Consider an anomaly whose long--short return, measured across all stocks, carries
-a $t$-statistic of $1.4$. Standard practice retires it. It fails the $1.96$
-hurdle that the factor-zoo literature erects to keep false discoveries out of a
-crowded field, so it is deemed spurious and set aside. This paper shows that the
-verdict is frequently a mistake about \emph{venue} rather than \emph{value}. The
-same factor, traded in the slice of the market it is built to exploit instead of
-the broad capitalization-weighted universe where convention evaluates it, earns
-economically large and statistically decisive returns out of sample.
+A value signal that looks dead in large-cap stocks---a $t$-statistic of $1.4$,
+short of the $1.96$ hurdle the factor-zoo literature erects against false
+discovery---is retired as spurious. Traded instead in the small, illiquid stocks
+it was built to exploit, the same signal is alive: it earns an out-of-sample
+Sharpe ratio near $0.8$ where it was pronounced worthless near $0.3$. The verdict
+was never about the signal. It was about the \emph{venue} in which the signal was
+read. This paper shows that mistake is systematic, that it discards a measurable
+and recoverable amount of return, and that exactly how much can be recovered is
+fixed by a law.
 
 The facts are stark. I study 179 anomalies from the open-source cross-section of
 \citet{ChenZimmermann2022}, each realized in four nested equity universes that
@@ -95,7 +96,8 @@ differ in the size and liquidity of their constituents: capitalization-weighted
 large caps, NYSE-breakpoint portfolios, a size-20 micro-cap construction, and
 equal-weighted small caps. I split the 1926--2024 sample in half. On the first
 half I apply the textbook screen, labeling a factor \emph{discarded} if its
-large-cap $t$-statistic falls below $1.96$; $94$ of the $179$ factors fail. I
+large-cap $t$-statistic falls below $1.96$; $94$ of the $127$ factors with a
+well-defined first-half record fail. I
 then hold these $94$ discards over the second half, 1975--2024---$594$ months
 never touched in selection---and compare two portfolios. Left in large caps,
 where the profession rejected them, the equal-weighted discard book earns an
@@ -589,7 +591,12 @@ first half of the sample, 1926--1974, only to \emph{select} and to \emph{assign}
 to apply the significance screen and to estimate each factor's home venue. I use
 the second half, 1975--2024---$594$ months---only to \emph{evaluate}. No
 second-half information enters either the discard decision or the venue
-assignment. This is the sense in which the exercise is implementable: everything
+assignment. Of the $179$ anomalies, $127$ have a long enough first-half
+large-cap record (at least sixty months) to carry a well-defined $t$-statistic
+there; of these, $94$ fail the $|t|<1.96$ screen and are the discards studied
+throughout, while $33$ survive and form the canonical book used in the spanning
+tests. The remaining $52$ begin trading only after 1974 and cannot be classified
+in-sample, so they enter no book. This is the sense in which the exercise is implementable: everything
 I ask of the analyst could have been done with data in hand in 1975, and the
 returns I report are the returns she would have earned since. Where this single
 split might seem to invite cherry-picking, Section~\ref{sec:robust} re-runs the
