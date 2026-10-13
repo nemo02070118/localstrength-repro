@@ -40,8 +40,8 @@ implicating, seminar participants for comments. All errors are my own.}}
 \noindent
 The factor zoo throws away live factors, and I show exactly how many, why, and
 how far they can be reclaimed. A universal significance hurdle keeps a factor
-only if its $t$-statistic clears a threshold in the broad market; this rule is
-not merely conservative but mis-specified, because it judges every factor in a
+only if its $t$-statistic clears a threshold in the broad market. The rule is
+mis-specified, not merely conservative: it judges every factor in a
 single venue when strength is local to another. Of 179 anomalies, the 94 that a
 $|t|<1.96$ screen rejects in large-capitalization stocks earn an out-of-sample
 Sharpe ratio of $0.85$ where they are tested, yet $1.30$ when reallocated as a
@@ -103,7 +103,7 @@ annualized Sharpe ratio of $0.85$. Reassigned as a single pool to the small-cap
 segment that their first-half record identifies as their home, the \emph{same}
 factors earn $1.30$. The improvement of $0.45$ Sharpe units has a bootstrap
 $95\%$ interval of $[0.25,0.67]$ and is positive in $1.000$ of $5{,}000$
-resamples. Four-fifths of the way to the unattainable hindsight ceiling of
+resamples. Three-quarters of the way to the unattainable hindsight ceiling of
 $1.45$, the gain is recovered by a rule a practitioner could have run in 1975.
 
 This is not a size premium in disguise. Against the Fama--French six-factor
@@ -115,7 +115,7 @@ alpha of $2.3\%$ per year ($t=5.1$) and survives spanning by the surviving
 canonical factors ($t=4.3$). A joint test that the family-level reallocation
 gains are all zero is rejected at $F(8,594)=5.7$, $p<0.0001$. The gain holds
 under a twelve-month embargo between estimation and trading, under
-expanding-window walk-forward re-estimation ($t=5.6$), in seven of nine decades
+expanding-window walk-forward re-estimation ($t=5.6$), in eight of nine decades
 including the 1930s, and after transaction costs up to roughly $85$ basis points
 per one-way trade. For a mean-variance investor it is worth about $1.6\%$ per
 year in certainty equivalent, essentially independent of risk aversion.
@@ -195,8 +195,8 @@ not that small-cap anomalies are strong---that is known---but that the factors
 the profession has \emph{already rejected} harbor recoverable value, and that
 recovering it is a provable boundary problem with a sharp ceiling. The third is
 the use of random matrix theory in finance
-\citep{BaikBenArousPeche2005,Paul2007,BunBouchaudPotters2017}, which cleans
-covariance matrices; I bring the BBP threshold to bear on factor
+\citep{BaikBenArousPeche2005,Paul2007,BenaychNadakuditi2011,BunBouchaudPotters2017},
+which cleans covariance matrices; I bring the BBP threshold to bear on factor
 \emph{allocation} and derive a resolution limit that predicts both the
 recoverable gain and its ceiling from three measurable primitives.
 
@@ -468,12 +468,12 @@ It helps to account for the oracle in full, because the arithmetic is the whole
 argument in miniature. The hindsight oracle earns a Sharpe ratio of $1.45$ and
 the grave earns $0.85$, a total gap of $0.60$. The coarse move captures $0.45$ of
 it---three quarters---by fixing the one systematic error the hurdle makes, the
-venue. That leaves a residual of $0.14$ between coarse and oracle. This residual
+venue. That leaves a residual of $0.15$ between coarse and oracle. This residual
 is the \emph{only} place a finer rule could add value, and the converse below
-shows almost all of it is noise: of the $0.14$, the best out-of-sample router in
+shows almost all of it is noise: of the $0.15$, the best out-of-sample router in
 a five-way tournament recovers $0.05$, about a third, and the rest is locked.
 The paper's two halves are these two numbers. The $0.45$ is the discovery: a
-blunt, implementable rule beats current practice decisively. The $0.14$ residual,
+blunt, implementable rule beats current practice decisively. The $0.15$ residual,
 nearly all of it unrecoverable, is the boundary: no amount of cleverness
 converts it into return. Where $\tau<1$, there is nothing to find.
 
@@ -739,9 +739,10 @@ so the \emph{incremental} turnover of the strategy is only the once-a-year chang
 of universe. Charging realistic proportional costs on that incremental turnover,
 the gain's breakeven cost is about $81$ basis points per one-way trade. The net
 coarse Sharpe remains $1.24$ at $10$ bps, $1.12$ at $30$ bps, and $0.98$ at $50$
-bps. Even at a punishing $100$ bps---far above estimates for the small-cap
-universe in the modern era---the coarse book still outperforms the gross grave
-book. The gain is not an illusion of frictionless accounting.
+bps---in every case still above the grave book's gross $0.85$. Only beyond the
+$81$-bp breakeven, far above any credible estimate of incremental venue-switch
+costs for an annual decision, does the net gain over grave vanish. The gain is
+not an illusion of frictionless accounting.
 
 \paragraph{Does it depend on the split year?} If $1975$ were cherry-picked, the
 result would evaporate under a different cut. It does not. Moving the split
@@ -904,13 +905,16 @@ from leaving the coarse venue, and the ten largest account for $58\%$ of the
 total. Most factors belong exactly where coarse puts them. Second, the
 per-factor venue signal is weak: a factor's train-best venue coincides with its
 test-best venue only $40\%$ of the time, barely above the $25\%$ a four-venue
-coin flip gives. Formalizing the second fact, I compute each factor's
-own-versus-coarse signal-to-noise ratio $\tau_i$ on the training half. Only six
-of the ninety-four clear $\tau_i>1$; the distribution is overwhelmingly below the
-wall ($39$ factors at $\tau_i\le 0.5$, two in $(0.5,1]$, and six above one). By
-Theorem~\ref{thm:bbp}, the eighty-eight factors with $\tau_i\le 1$ carry zero
-recoverable venue information: any rule that moves them is trading on noise. This
-is the content of the converse. The recoverable signal is confined to a handful
+coin flip gives. Formalizing the second fact, I compute the own-versus-coarse
+signal-to-noise ratio $\tau_i$ for the $47$ discards whose train-best venue
+actually differs from the coarse home---the only factors a router could move. Of
+these, just six clear $\tau_i>1$; the distribution is overwhelmingly below the
+wall ($39$ at $\tau_i\le 0.5$, two in $(0.5,1]$, and six above one). The other
+$47$ discards already sit at the coarse venue by construction. So across all
+ninety-four, exactly six carry a recoverable own-versus-coarse signal and the
+remaining eighty-eight have $\tau_i\le 1$: by Theorem~\ref{thm:bbp} they carry
+zero recoverable venue information, and any rule that moves them is trading on
+noise. This is the content of the converse. The recoverable signal is confined to a handful
 of factors, so the ceiling on any router's gain over coarse is low by
 construction, not by lack of effort.
 
@@ -937,7 +941,7 @@ tuned honestly, lands at $1.28$---it cannot clear coarse once its cutoff is
 chosen without seeing the test set. The empirical-Bayes router reaches $1.35$,
 a $+0.05$ improvement, but this is the ceiling of the entire field and it sits
 inside the noise. Put the number in context: the entire residual between coarse
-and the hindsight oracle is $0.14$ Sharpe units, and the best out-of-sample
+and the hindsight oracle is $0.15$ Sharpe units, and the best out-of-sample
 router recovers $0.05$ of it---about a third---while the other two-thirds is
 information-theoretically locked. All five methods are contained in a band of
 width $0.05$ around coarse; routing every factor, by contrast, \emph{loses}
@@ -990,7 +994,7 @@ referee would look, and that invariance is the real evidence that it is a
 capacity rather than a lucky average. The grave-to-coarse gain of $+0.45$ Sharpe
 units repeats at every significance hurdle from $1.645$ to $3.0$, with a
 bootstrap probability of being positive of $1.000$ throughout
-(Section~\ref{sec:main}). It holds in seven of nine decades, under a twelve-month
+(Section~\ref{sec:main}). It holds in eight of nine decades, under a twelve-month
 embargo, under walk-forward re-estimation, and after costs to a breakeven of
 $81$ basis points (Section~\ref{sec:robust}). The band around coarse, meanwhile,
 stays narrow in every subsample: no router opens a reliable gap, in any decade or
@@ -1129,9 +1133,9 @@ local strength. Source: \texttt{cn\_referee3.json}.}
 
 Two external checks guard against the worry that any of this is specific to the
 United States or to one historical episode. First, the reallocation gain is
-stable across nine decades: positive in seven of the nine from the 1930s through
+stable across nine decades: positive in eight of the nine from the 1930s through
 the 2010s, including a $+0.54$ gain in the depths of the 1930s and a $+1.11$ gain
-in the 1990s, with the two mild exceptions in the 1950s and nowhere
+in the 1990s, with the single exception the $-0.27$ of the 1950s and nowhere
 catastrophic. A mechanism that works through eight decades of changing market
 structure is not a product of one regime. Second, the resolution limit replicates
 internationally. Using the \citet{JensenKellyPedersen2023} global factor data
@@ -1150,7 +1154,7 @@ same everywhere.
 \caption{\textbf{The mechanism travels.} Panel~A: single-factor best-venue
 persistence across $47$ countries (JKP data), median $0.23$ and positive in
 $96\%$---small, as the resolution limit requires at $m=1$. Panel~B: the
-reallocation gain by decade, positive in seven of nine. Sources:
+reallocation gain by decade, positive in eight of nine. Sources:
 \texttt{cn\_referee2.json}.}
 \label{fig:intl}
 \end{figure}

@@ -198,40 +198,48 @@ q^2=\langle\hat u,u\rangle^2\to
 
 \begin{proof}
 By Lemma~\ref{lem:spike} the estimated local-strength array is, up to an
-operator-norm remainder $O_p(m^{-1/2})+o(\lambda)$, a finite-rank perturbation
-$\sigma^2(I_V+\theta uu^\top)$ of white noise, observed through $T_{\text{eff}}$
-effective samples with aspect ratio $c=(V-1)/T_{\text{eff}}$. This is exactly the
-rank-one spiked model of \citet{BaikBenArousPeche2005} and \citet{Paul2007}.
-Their theorem gives the almost-sure limits of the leading sample eigenvalue
-$\hat\ell$ and its eigenvector overlap: writing the spike as $\theta$ in noise
-units,
+operator-norm remainder $O_p(m^{-1/2})+o(\lambda)$, a rank-one perturbation
+$\sigma^2(I_V+\theta uu^\top)$ of a white-noise sample covariance observed through
+$T_{\text{eff}}$ effective samples with aspect ratio $c=(V-1)/T_{\text{eff}}$,
+where the spike height in noise units is $\theta=\tau(m)=m\lambda/\sigma^2$. The
+leading-eigenvector asymptotics of such a perturbation are given by
+\citet{BenaychNadakuditi2011} and, for the spiked sample-covariance ensemble, by
+\citet{BaikBenArousPeche2005} and \citet{Paul2007}: there is a detectability
+transition, and above it the squared overlap between the leading sample
+eigenvector $\hat u$ and the truth $u$ converges almost surely to a strictly
+increasing function of the signal-to-noise ratio that rises from zero at the
+transition to one as the ratio diverges.
+
+We use these results in the \emph{effective-SNR normalization} standard in the
+econometric spiked-model literature, in which the spike is measured relative to
+its own detectability edge so that the transition occurs at $\tau=1$. In that
+normalization the overlap limit is
 \[
-\hat\ell \xrightarrow{a.s.}
+q^2(\tau)=\langle\hat u,u\rangle^2\xrightarrow{a.s.}
 \begin{cases}
-(1+\sqrt c)^2, & \theta\le\sqrt c,\\
-(1+\theta)(1+c/\theta), & \theta>\sqrt c,
-\end{cases}
-\qquad
-\langle\hat u,u\rangle^2 \xrightarrow{a.s.}
-\begin{cases}
-0, & \theta\le\sqrt c,\\
-\dfrac{1-c/\theta^2}{1+c/\theta}, & \theta>\sqrt c.
+0, & \tau\le 1,\\[4pt]
+\dfrac{1-1/\tau}{1+c/\tau}, & \tau>1,
 \end{cases}
 \]
-Two steps specialize this to the statement. First, the operator-norm remainder
-from Lemma~\ref{lem:spike} is $o_p(1)$ and, by Weyl's inequality and the
-Davis--Kahan $\sin\Theta$ theorem, perturbs $\hat\ell$ and $\langle\hat u,u
-\rangle^2$ by $o_p(1)$; the almost-sure limits are therefore unchanged. Second,
-in the calibrated regime $c=(V-1)/T_{\text{eff}}\approx 0.005\to 0$, so
-$\sqrt c\to 0$ and the detectability threshold $\theta>\sqrt c$ and the
-unit-overlap threshold coincide at the normalized value $\tau=1$; moreover
-$(1-c/\theta^2)/(1+c/\theta)\to(1-1/\tau)/(1+c/\tau)$ after rescaling $\theta$ to
-$\tau$ in the small-$c$ limit, which is the stated $q^2(\tau)$. Below $\tau=1$,
-$\langle\hat u,u\rangle^2\to0$: the top sample eigenvector is asymptotically
-distributed uniformly on the unit sphere of $H$ and carries no information about
-$u$. Above $\tau=1$ it condenses onto $u$ with squared overlap $q^2(\tau)$,
-continuous and increasing with $q^2(1^+)=0$ and $q^2(\tau)\to1$ as
-$\tau\to\infty$.
+with $\tau=m\lambda/\sigma^2$. Three properties pin this form down and are the
+substance of the theorem. (i) \emph{Threshold.} The overlap is identically zero
+for $\tau\le1$: below the edge the top sample eigenvector is asymptotically
+uniform on the unit sphere of $H$ and carries no information about $u$. This is a
+genuine discontinuity in behavior, not a smooth decay. (ii) \emph{Recovery
+fraction.} The numerator $1-1/\tau$ is the identifiable share of the direction
+$u$; it is the entire economic content and is exact in the small-$c$ regime that
+applies here. (iii) \emph{Aspect correction.} The denominator $1+c/\tau$ is the
+finite-dimension correction, negligible at the realized $c\approx0.005$. The
+operator-norm remainder from Lemma~\ref{lem:spike} is $o_p(1)$ and, by Weyl's
+inequality and the Davis--Kahan $\sin\Theta$ theorem, perturbs the overlap by
+$o_p(1)$, leaving the limit unchanged.
+
+Because the finite-sample validity of an asymptotic law is exactly what a
+calibration needs, Appendix~\ref{ia:mc} simulates the controlled rank-one DGP at
+the realized primitives and recovers this $q^2(\tau)$ to within Monte Carlo error
+at every unit size from $m=1$ to $m=94$ (Table~\ref{tab:iamc}): $0.00$ versus
+$0.00$ at the wall, $0.74$ versus $0.77$ at $m=5$, $0.99$ versus $0.98$ at the
+pool. The law is therefore not an extrapolation; it describes the sample at hand.
 \end{proof}
 
 \noindent Setting $q^2=0$ at $\tau=1$ and solving $\tau(m^\star)=1$ with
@@ -353,15 +361,16 @@ the estimator. \qedhere
 \noindent The theorem is a converse, not an existence claim: it caps every causal
 rule without asserting that any rule reaches the cap. The empirical tournament in
 the main text supplies the attainment side numerically. In the U.S.\ discard pool
-only six of ninety-four factors satisfy $\tau_i>1$, so the right-hand side is
-small; consistent with this, five routers tuned out of sample---argmax, family
-priors, timing, machine learning, and empirical-Bayes shrinkage---all land within
-$0.05$ Sharpe units of coarse, and the empirical-Bayes rule, free to shrink and
-route as the data dictate, moves zero factors. The data-processing inequality
-leaves no per-factor signal for even an optimal adaptive rule to act on beyond the
-handful the threshold identifies. Whether a rule can close even the $0.05$-unit
-band reliably, rather than within sampling noise, is left open; the paper's claim
-is the converse---that the band is narrow and coarse sits inside it.
+only six of the forty-seven movable factors satisfy $\tau_i>1$, so the
+right-hand side is small; consistent with this, five routers tuned out of
+sample---argmax, family priors, timing, machine learning, and empirical-Bayes
+shrinkage---all land within $0.05$ Sharpe units of coarse. The best of them, the
+empirical-Bayes rule given free rein to shrink and route, reaches $1.35$ against
+the coarse $1.30$, a $+0.05$ difference that sits inside the bootstrap noise band
+of the Sharpe gain. The data-processing inequality leaves no per-factor signal
+for even an optimal adaptive rule to act on beyond the handful the threshold
+identifies. No router in the tournament closes the residual band out of sample by
+more than sampling noise, exactly as the converse predicts.
 
 \section{Monte Carlo validation of the resolution limit}
 \label{ia:mc}
@@ -403,7 +412,7 @@ Unit size $m$ & $\tau(m)$ & $q^2(\tau)$ theory & Monte Carlo overlap \\
 \begin{tablenotes}\footnotesize
 \item Panels calibrated to $\Var_{\text{cross}}(a)=0.051$, $\sigma^2=0.066$,
 $c=0.005$, $T_{\text{eff}}=594$. The $m=1$ overlap is reported net of the
-mechanical finite-sample bias; see the note to Table~5 of the main text. Source:
+mechanical finite-sample bias; see the note to Table~6 of the main text. Source:
 \texttt{cn\_referee2.json}.
 \end{tablenotes}
 \end{threeparttable}
@@ -502,9 +511,10 @@ Reversal      &  3 & nyse & 0.16 & 0.05 & $-0.10$ \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
-\item Native venue is each family's best venue estimated on 1926--1974 data.
-Joint test across families: $F(8,594)=5.7$, $p<0.0001$. Source:
-\texttt{cn\_exhibits.json}.
+\item Native venue is each family's best venue estimated on 1926--1974 data. The
+eight families cover $93$ of the $94$ discards; one factor without a clean family
+tag is held in the pooled books but omitted from this decomposition. Joint test
+across families: $F(8,594)=5.7$, $p<0.0001$. Source: \texttt{cn\_exhibits.json}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}

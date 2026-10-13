@@ -1,0 +1,10 @@
+{
+  "n_disc": 94,
+  "coarse_venue": "wide",
+  "n_positive_hindsight_gain": 35,
+  "frac_positive": 0.3723404255319149,
+  "top10_share_of_gain": 0.5782983526440613,
+  "venue_hit_rate_train_test": 0.40425531914893614,
+  "random_guess_baseline": 0.25,
+  "n_hit_evaluable": 94
+}

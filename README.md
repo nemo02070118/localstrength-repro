@@ -71,7 +71,8 @@ q5/q5_factors.csv              # Hou-Xue-Zhang q5 factors (global-q.org)
 | `code/cn_phase_theory.py` | `cn_phase_theory.json` (BBP calibration: m\*, τ, q²) | OSAP |
 | `code/cn_capacity.py` | `cn_capacity.json` (converse bound, τ distribution, router tournament) | OSAP |
 | `code/cn_exhibits.py` | `cn_exhibits.json` (summary stats, family decomposition, GRS, CER) | OSAP, Ken French, q5 |
-| `code/cn_audit.py` | Prints the authoritative ledger | all result JSONs |
+| `code/cn_sparsity.py` | `cn_sparsity.json` (Section VI.1 sparsity numbers: 35/94, top-10 share, venue hit rate) | OSAP |
+| `code/cn_audit.py` | Prints the authoritative ledger (A–D) | all result JSONs |
 
 Producers must run before consumers: `cn_referee4` imports helpers from
 `cn_resurrection` and `cn_referee`. `run_all.py` enforces the order.

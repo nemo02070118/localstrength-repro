@@ -27,6 +27,7 @@ ORDER = [
     "cn_phase_theory.py",
     "cn_capacity.py",
     "cn_exhibits.py",
+    "cn_sparsity.py",
 ]
 
 

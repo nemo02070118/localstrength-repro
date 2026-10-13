@@ -58,3 +58,14 @@ print(f"tau(pool m=94) = {pt['predicted']['pool (m=N)']['tau']:.1f}  "
       f"q2 = {pt['predicted']['pool (m=N)']['q2']:.3f}")
 print(f"var_cross = {pt['var_cross_advantage']:.4f}  sigma2 = {pt['sigma2_single']:.4f}")
 print(f"empirical single-factor persist rho = {pt['empirical_single_residual_rho']:.3f}")
+
+sp = L('cn_sparsity.json')
+print()
+print("=" * 60)
+print("LEDGER D -- SPARSITY (Section VI.1 narrative numbers)")
+print("=" * 60)
+print(f"positive hindsight gain: {sp['n_positive_hindsight_gain']}/{sp['n_disc']} "
+      f"= {sp['frac_positive']*100:.0f}%")
+print(f"top-10 share of total gain = {sp['top10_share_of_gain']*100:.0f}%")
+print(f"venue hit rate (train-best = test-best) = {sp['venue_hit_rate_train_test']*100:.0f}% "
+      f"(random baseline {sp['random_guess_baseline']*100:.0f}%)")
