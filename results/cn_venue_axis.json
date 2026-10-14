@@ -1,0 +1,23 @@
+{
+  "n_disc": 94,
+  "venues": [
+    "vw",
+    "nyse",
+    "me20",
+    "wide"
+  ],
+  "axes": {
+    "size_axis_persistence": -0.14081058689870715,
+    "listing_axis_persistence": 0.05154918285887442,
+    "listing_perp_size_persistence": -0.012400094147068129,
+    "axis_correlation_size_vs_listing": 0.2514430672688955,
+    "size_axis_dispersion_tr": 0.27053904060709694,
+    "listing_axis_dispersion_tr": 0.3133847028629403
+  },
+  "interpretation": {
+    "size_axis": "wide - me20 (pure size)",
+    "listing_axis": "nyse - vw (listing/liquidity, non-size)"
+  },
+  "gate_nonsize_axis_tradable": false,
+  "gate_nonsize_beats_size": false
+}

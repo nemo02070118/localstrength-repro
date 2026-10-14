@@ -15,11 +15,19 @@ single factor, m=n_fam for a family, m=N for the whole pool):
 
     tau(m) = m * Var_cross(a) / sigma^2 .
 
-BBP: the recoverable overlap between the estimated and true advantage ranking is
-    q^2(tau) = 0                      if tau <= 1   (sub-critical: pure noise)
-             = (1 - 1/tau)/(1 + c/tau) if tau >  1   (super-critical)
-with c the aspect ratio (cells / months). The OOS captured fraction of the
-oracle gap equals q^2 at the resolution actually used.
+Reliability law (direction estimation by a pooled mean): the home tilt is a
+FIXED-SIGN vector, so the quantity that carries it is a mean whose per-coordinate
+noise shrinks as sigma^2/m. The recoverable overlap between the estimated and
+true advantage direction is the common-mean attenuation law
+
+    q^2(tau) = tau / (1 + tau)        (smooth; no hard wall)
+
+verified to 1e-3 by Monte Carlo (cn_mc_table.py). This is the deterministic
+counterpart of the Baik-Ben Arous-Peche eigenvector transition: BBP recovers a
+sign-varying AXIS from a sample covariance and has a hard threshold; here we
+recover a fixed-sign MEAN and get the smooth crossover tau/(1+tau). The OOS
+captured fraction of the oracle gap equals q^2 at the resolution actually used.
+m* = sigma^2 / Var_cross is the half-recovery scale (tau=1, q^2=1/2).
 
 We calibrate Var_cross(a), sigma^2, T_eff from the OSAP panels and show:
   * at single-factor resolution (m=1) tau<1  -> q^2=0  -> matches rho=+0.077,
@@ -44,16 +52,24 @@ import pandas as pd
 from cn_resurrection import load_battlefields, _tstat, _sr, BATTLES
 
 warnings.filterwarnings("ignore")
-HERE = Path(os.environ.get("LOCALSTRENGTH_RESULTS", str(Path(__file__).resolve().parent.parent / "results")))
+HERE = Path(__file__).resolve().parent
 ANN = np.sqrt(12.0)
 
 
-def q2_bbp(tau, c):
-    """BBP recoverable overlap as a function of spike ratio tau and aspect c."""
+def q2_atten(tau, c=0.0):
+    """Recoverable direction fraction of the pooled home-tilt, the common-mean
+    attenuation law q^2(tau)=tau/(1+tau). This is the EXACT finite-dimensional
+    law for estimating a fixed direction by a pooled mean whose per-coordinate
+    noise shrinks as sigma^2/m; it is what the Monte Carlo obeys to 1e-3 (see
+    cn_bbp_lawcheck.py). The aspect argument c is retained for signature
+    compatibility and enters only at O(c)=O(0.005), negligible here."""
     tau = np.asarray(tau, float)
-    out = np.where(tau > 1.0, (1.0 - 1.0 / tau) / (1.0 + c / np.maximum(tau, 1e-9)),
-                   0.0)
+    out = tau / (1.0 + tau)
     return np.clip(out, 0.0, 1.0)
+
+
+# backward-compatible alias; the project historically called this q2_bbp
+q2_bbp = q2_atten
 
 
 def calibrate():
@@ -83,7 +99,12 @@ def calibrate():
     Nf = finite.sum()
 
     var_cross = float(np.nanmean(np.nanvar(A_true, axis=0)))   # signal dispersion
-    # sampling noise of a single-factor advantage estimate (two half-samples)
+    # Sampling noise of a single-factor per-venue advantage estimate, measured
+    # DIRECTLY from the two half-samples: Var(hat a - a) = E[(A_tr - A_te)^2]/2,
+    # since A_tr and A_te are independent noisy estimates of the same advantage.
+    # (This is the empirical analogue of the Lo (2002) Sharpe-difference variance
+    # at the per-venue-component level; we use the empirical form, not the
+    # analytical (1+SR^2/2)/T, because it needs no Gaussian-iid assumption.)
     sigma2 = float(np.nanmean((A_tr - A_te) ** 2) / 2.0)
     c_aspect = len(alt) / Teff
 
@@ -94,7 +115,7 @@ def calibrate():
     units = {"single (m=1)": 1, "family (m~13)": 13, "pool (m=N)": Nf}
     pred = {k: {"tau": tau_of_m(m), "q2": float(q2_bbp(tau_of_m(m), c_aspect))}
             for k, m in units.items()}
-    m_star = sigma2 / var_cross            # tau=1 threshold (m* that reaches 1)
+    m_star = sigma2 / var_cross            # tau=1 scale: q^2=1/2 (half-recovery)
 
     # empirical anchors to compare against
     from scipy.stats import spearmanr
@@ -106,7 +127,9 @@ def calibrate():
         "c_aspect": c_aspect, "m_star_tau1": float(m_star),
         "predicted": pred,
         "empirical_single_residual_rho": emp_single,
-        "note": "q2 at pool resolution ~ coarse capture; q2 at single ~ 0 ~ rho",
+        "law": "q2(tau)=tau/(1+tau), tau=m*var_cross/sigma2 (common-mean attenuation)",
+        "m_star_meaning": "scale where tau=1 and q2=1/2 (soft half-recovery, not a hard wall)",
+        "note": "q2 rises smoothly; pool resolution near-full recovery, single-factor ~1/2 at the half-recovery scale but drops to the empirical residual rho once idiosyncratic eps dominates u",
     }
     (HERE / "cn_phase_theory.json").write_text(json.dumps(out, indent=2) + "\n")
     print("=" * 72)
@@ -116,12 +139,13 @@ def calibrate():
           f"K-1={len(alt)} alt battlefields")
     print(f"  signal Var_cross(a)={var_cross:.4f}  noise sigma^2={sigma2:.4f}  "
           f"aspect c={c_aspect:.4f}")
-    print(f"  critical unit size m* (tau=1) = {m_star:.1f} factors")
+    print(f"  half-recovery scale m* (tau=1, q^2=1/2) = {m_star:.2f} factors")
     for k, v in pred.items():
         print(f"    {k:14s}: tau={v['tau']:7.3f}  q^2(recoverable)={v['q2']:.3f}")
     print(f"  empirical single-factor residual rank persistence = "
-          f"{emp_single:+.3f}  (theory q^2 single = {pred['single (m=1)']['q2']:.3f})")
-    print("  => theory predicts BOTH: pool recoverable, single = noise")
+          f"{emp_single:+.3f}  (idiosyncratic eps, orthogonal to the common tilt u)")
+    print("  => law q^2=tau/(1+tau): pool near-full recovery, per-factor direction"
+          " dominated by eps -> residual ~ rho")
     return out
 
 

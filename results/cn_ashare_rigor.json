@@ -1,0 +1,146 @@
+{
+  "market": "China A-share (QuantaAlpha daily_pv.h5)",
+  "spec": "long-only, floor=0.30, cost=10bps, ex-ILLIQ, OOS test half",
+  "coarse_venue": "small",
+  "per_factor_routes": {
+    "REV": "small",
+    "MOM": "mid",
+    "VOL": "small",
+    "MAX": "small",
+    "TURN": "large",
+    "ILLIQ": "mid"
+  },
+  "R1_spanning": {
+    "fine_vs_mkt": {
+      "alpha_monthly": 0.0052,
+      "alpha_ann_pct": 6.1824,
+      "t_alpha": 6.6574,
+      "betas": [
+        -0.0313
+      ],
+      "n": 103
+    },
+    "fine_vs_mkt_canon": {
+      "alpha_monthly": 0.0033,
+      "alpha_ann_pct": 4.0148,
+      "t_alpha": 7.826,
+      "betas": [
+        0.0039,
+        0.063,
+        0.1961,
+        0.0735,
+        0.2575,
+        0.2972
+      ],
+      "n": 103
+    },
+    "coarse_vs_mkt": {
+      "alpha_monthly": 0.0039,
+      "alpha_ann_pct": 4.6278,
+      "t_alpha": 5.2926,
+      "betas": [
+        -0.0359
+      ],
+      "n": 103
+    },
+    "coarse_vs_mkt_canon": {
+      "alpha_monthly": 0.0022,
+      "alpha_ann_pct": 2.6214,
+      "t_alpha": 5.0645,
+      "betas": [
+        0.0058,
+        0.0839,
+        0.1256,
+        0.14,
+        0.1526,
+        0.1285
+      ],
+      "n": 103
+    }
+  },
+  "R2_placebo": {
+    "true_coarse_gain": 0.9501,
+    "placebo_mean": 0.2076,
+    "placebo_sd": 0.1117,
+    "placebo_p95": 0.3873,
+    "emp_p_true_ge": 0.0,
+    "z_true_vs_placebo": 6.6449
+  },
+  "R3_fdr": {
+    "per_factor": {
+      "REV": {
+        "route_to": "small",
+        "mean_diff_monthly": 0.0007,
+        "t": 0.6577,
+        "p": 0.5108
+      },
+      "MOM": {
+        "route_to": "mid",
+        "mean_diff_monthly": -0.0049,
+        "t": -3.8228,
+        "p": 0.0001
+      },
+      "VOL": {
+        "route_to": "small",
+        "mean_diff_monthly": 0.0061,
+        "t": 4.5262,
+        "p": 0.0
+      },
+      "MAX": {
+        "route_to": "small",
+        "mean_diff_monthly": 0.0066,
+        "t": 5.2687,
+        "p": 0.0
+      },
+      "TURN": {
+        "route_to": "large",
+        "mean_diff_monthly": 0.0088,
+        "t": 6.4774,
+        "p": 0.0
+      }
+    },
+    "bh_q0.05": {
+      "TURN": {
+        "p": 0.0,
+        "bh_crit_0.05": 0.01,
+        "pass": true
+      },
+      "MAX": {
+        "p": 0.0,
+        "bh_crit_0.05": 0.02,
+        "pass": true
+      },
+      "VOL": {
+        "p": 0.0,
+        "bh_crit_0.05": 0.03,
+        "pass": true
+      },
+      "MOM": {
+        "p": 0.0001,
+        "bh_crit_0.05": 0.04,
+        "pass": true
+      },
+      "REV": {
+        "p": 0.5108,
+        "bh_crit_0.05": 0.05,
+        "pass": false
+      }
+    },
+    "n_pass": 4,
+    "n_tests": 5
+  },
+  "R4_newey_west": {
+    "universal": {
+      "mean_ann_pct": 1.449,
+      "t": 1.199
+    },
+    "coarse": {
+      "mean_ann_pct": 3.947,
+      "t": 4.43
+    },
+    "fine": {
+      "mean_ann_pct": 5.589,
+      "t": 5.261
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "n_llm_factors": 6960,
+  "n_trad_factors": 179,
+  "n_themes": 87,
+  "T_llm": 139,
+  "T_trad": 798,
+  "d_eff_llm": 16.838126501755003,
+  "d_eff_trad": 30.150715830493716,
+  "hurdle_llm_sqrt2logdeff": 2.376403059146414,
+  "hurdle_trad_sqrt2logdeff": 2.610060790554995,
+  "hurdle_naive_sqrt2logN_llm": 4.206645873692832,
+  "contrast_llm": {
+    "mean_dist": 0.9844515635100453,
+    "std_dist": 0.23345063448690037,
+    "contrast_cv": 0.2371377558226797,
+    "n_used": 1200
+  },
+  "contrast_trad": {
+    "mean_dist": 0.9762523727964633,
+    "std_dist": 0.16062149876727796,
+    "contrast_cv": 0.16452866414775474,
+    "n_used": 179
+  },
+  "contrast_std_ratio_llm_over_trad": 1.453420845145664,
+  "contrast_cv_ratio_llm_over_trad": 1.4413157552274203,
+  "theme_silhouette_llm": -0.18608413496947301,
+  "gate_A_deff_small": true,
+  "gate_B_contrast_5x": false,
+  "note_wasserstein": "Firm-level w_ij and c_j (WRDS CRSP/Compustat/13F) unavailable in this environment; strict W2(p_i,q_v) routing not computed. Gates A/B use return-profile correlation distance as the observable contrast proxy."
+}

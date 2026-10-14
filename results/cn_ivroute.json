@@ -1,0 +1,83 @@
+{
+  "n_disc": 94,
+  "alts": [
+    "vw",
+    "nyse",
+    "me20"
+  ],
+  "instruments": [
+    "Illiquidity",
+    "IdioVol3F",
+    "Size",
+    "DolVol",
+    "BidAskSpread",
+    "MaxRet",
+    "ReturnSkew",
+    "Beta",
+    "std_turn",
+    "Coskewness",
+    "VolSD",
+    "BetaTailRisk",
+    "zerotrade12M",
+    "Price"
+  ],
+  "ridge_lambda": 30.0,
+  "coarse_SR": 1.302433790399738,
+  "r2_in_sample_eps": 0.276146240344477,
+  "r2_oos_eps": -0.13557921245619697,
+  "router_full_SR": 1.2178679690687808,
+  "router_full_dist": {
+    "nyse": 19,
+    "me20": 11,
+    "wide": 64
+  },
+  "router_full_boot": {
+    "point": -0.08456582133095725,
+    "ci95": [
+      -0.17583853328901863,
+      0.010644234414997983
+    ],
+    "p_gt0": 0.03933333333333333,
+    "n": 594
+  },
+  "router_orth_SR": 1.150836874569707,
+  "router_orth_dist": {
+    "nyse": 22,
+    "me20": 17,
+    "vw": 22,
+    "wide": 33
+  },
+  "router_orth_boot": {
+    "point": -0.151596915830031,
+    "ci95": [
+      -0.2921481249750259,
+      -0.02338987362969313
+    ],
+    "p_gt0": 0.010666666666666666,
+    "n": 594
+  },
+  "frac_pred_perp_to_u": 0.5797918220006139,
+  "instrument_strength": {
+    "Illiquidity": 0.024446214367484193,
+    "IdioVol3F": 0.05214854721554908,
+    "Size": 0.010540662058398055,
+    "DolVol": 0.08523833860161664,
+    "BidAskSpread": 0.07371329334945297,
+    "MaxRet": 0.05953400642368627,
+    "ReturnSkew": 0.04010576465831703,
+    "Beta": 0.08511945126396407,
+    "std_turn": 0.027499971173005563,
+    "Coskewness": 0.027310782603758226,
+    "VolSD": 0.04866777766713404,
+    "BetaTailRisk": 0.07238874319273261,
+    "zerotrade12M": 0.010441845066194309,
+    "Price": 0.0126779304605178
+  },
+  "gate_oos_r2_pos": false,
+  "gate_router_beats_coarse": false,
+  "gates_passed": 0,
+  "verdict": "instrument routing does not clear coarse",
+  "dynamic_iv_SR": 1.1484980811646017,
+  "dynamic_iv_coarse_SR": 1.1850704943737334,
+  "dynamic_iv_n_months": 984
+}

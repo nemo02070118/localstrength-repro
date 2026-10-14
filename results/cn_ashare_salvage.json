@@ -1,0 +1,476 @@
+{
+  "market": "China A-share (QuantaAlpha daily_pv.h5)",
+  "n_stocks_total": 5441,
+  "n_months": 206,
+  "sample": [
+    "2008-12",
+    "2026-01"
+  ],
+  "train_test_split": {
+    "train": [
+      "2008-12",
+      "2017-06"
+    ],
+    "test": [
+      "2017-07",
+      "2026-01"
+    ]
+  },
+  "factors": [
+    "REV",
+    "MOM",
+    "VOL",
+    "MAX",
+    "TURN",
+    "ILLIQ"
+  ],
+  "venues": [
+    "small",
+    "mid",
+    "large",
+    "all"
+  ],
+  "local_strength_fullsample_sharpe": {
+    "REV": {
+      "small": 0.0041,
+      "mid": -0.0094,
+      "large": 0.0922,
+      "all": -0.1348
+    },
+    "MOM": {
+      "small": -0.0448,
+      "mid": -0.2232,
+      "large": -0.559,
+      "all": 0.1134
+    },
+    "VOL": {
+      "small": 0.894,
+      "mid": 0.6267,
+      "large": -0.2087,
+      "all": 0.1982
+    },
+    "MAX": {
+      "small": 0.9168,
+      "mid": 0.6778,
+      "large": -0.2209,
+      "all": 0.0009
+    },
+    "TURN": {
+      "small": 0.5365,
+      "mid": 0.8605,
+      "large": 1.174,
+      "all": 0.6416
+    },
+    "ILLIQ": {
+      "small": 5.5811,
+      "mid": 6.0174,
+      "large": 5.7996,
+      "all": 4.1032
+    }
+  },
+  "salvage_per_factor": {
+    "REV": {
+      "train_sharpe": {
+        "small": 0.1593,
+        "mid": 0.038,
+        "large": 0.1002
+      },
+      "test_sharpe": {
+        "small": -0.2065,
+        "mid": -0.0617,
+        "large": 0.0832
+      },
+      "route_to": "small",
+      "oracle_venue": "large",
+      "coarse_venue": "small",
+      "universal_test_sharpe": -0.2825,
+      "salvage_test_sharpe": -0.2065,
+      "coarse_test_sharpe": -0.2065,
+      "oracle_test_sharpe": 0.0832
+    },
+    "MOM": {
+      "train_sharpe": {
+        "small": 0.4685,
+        "mid": 0.5245,
+        "large": 0.2563
+      },
+      "test_sharpe": {
+        "small": -0.8804,
+        "mid": -1.1832,
+        "large": -1.4042
+      },
+      "route_to": "mid",
+      "oracle_venue": "small",
+      "coarse_venue": "small",
+      "universal_test_sharpe": -0.4264,
+      "salvage_test_sharpe": -1.1832,
+      "coarse_test_sharpe": -0.8804,
+      "oracle_test_sharpe": -0.8804
+    },
+    "VOL": {
+      "train_sharpe": {
+        "small": 0.3491,
+        "mid": 0.1071,
+        "large": -0.6195
+      },
+      "test_sharpe": {
+        "small": 1.6411,
+        "mid": 1.3226,
+        "large": 0.3108
+      },
+      "route_to": "small",
+      "oracle_venue": "small",
+      "coarse_venue": "small",
+      "universal_test_sharpe": 0.6338,
+      "salvage_test_sharpe": 1.6411,
+      "coarse_test_sharpe": 1.6411,
+      "oracle_test_sharpe": 1.6411
+    },
+    "MAX": {
+      "train_sharpe": {
+        "small": 0.2145,
+        "mid": -0.0001,
+        "large": -0.6231
+      },
+      "test_sharpe": {
+        "small": 1.8627,
+        "mid": 1.5474,
+        "large": 0.3255
+      },
+      "route_to": "small",
+      "oracle_venue": "small",
+      "coarse_venue": "small",
+      "universal_test_sharpe": 0.5739,
+      "salvage_test_sharpe": 1.8627,
+      "coarse_test_sharpe": 1.8627,
+      "oracle_test_sharpe": 1.8627
+    },
+    "TURN": {
+      "train_sharpe": {
+        "small": 0.9184,
+        "mid": 0.909,
+        "large": 1.1419
+      },
+      "test_sharpe": {
+        "small": 0.0648,
+        "mid": 0.8172,
+        "large": 1.2733
+      },
+      "route_to": "large",
+      "oracle_venue": "large",
+      "coarse_venue": "small",
+      "universal_test_sharpe": 0.4041,
+      "salvage_test_sharpe": 1.2733,
+      "coarse_test_sharpe": 0.0648,
+      "oracle_test_sharpe": 1.2733
+    },
+    "ILLIQ": {
+      "train_sharpe": {
+        "small": 5.2425,
+        "mid": 5.3737,
+        "large": 5.3089
+      },
+      "test_sharpe": {
+        "small": 6.3962,
+        "mid": 7.2391,
+        "large": 6.4455
+      },
+      "route_to": "mid",
+      "oracle_venue": "mid",
+      "coarse_venue": "small",
+      "universal_test_sharpe": 4.7899,
+      "salvage_test_sharpe": 7.2391,
+      "coarse_test_sharpe": 6.3962,
+      "oracle_test_sharpe": 7.2391
+    }
+  },
+  "spec": "LONG-ONLY (A-shares cannot be shorted): top-quintile minus venue EW benchmark; base floor=30%% illiquid dropped; cost=10bps/side",
+  "coarse_venue": "small",
+  "base_combo_test_sharpe_all": {
+    "universal": 2.3714,
+    "coarse": 4.3981,
+    "fine": 4.9045,
+    "oracle": 4.7924
+  },
+  "base_combo_test_sharpe_ex_illiq": {
+    "universal": 0.3747,
+    "coarse": 1.3247,
+    "fine": 1.5024,
+    "oracle": 1.6937
+  },
+  "base_ci_ex_illiq": {
+    "fine_vs_universal": {
+      "point": 1.128,
+      "lo2.5": 0.806,
+      "hi97.5": 1.517,
+      "p_gt0": 1.0
+    },
+    "coarse_vs_universal": {
+      "point": 0.95,
+      "lo2.5": 0.485,
+      "hi97.5": 1.409,
+      "p_gt0": 1.0
+    },
+    "fine_vs_coarse": {
+      "point": 0.178,
+      "lo2.5": -0.168,
+      "hi97.5": 0.56,
+      "p_gt0": 0.85
+    }
+  },
+  "robustness_sweep": {
+    "floor20_bps5": {
+      "ex_illiq": {
+        "universal": 0.414,
+        "coarse": 1.311,
+        "fine": 1.728,
+        "oracle": 1.751
+      },
+      "coarse_venue": "mid",
+      "fine_vs_coarse_ci": [
+        0.417,
+        0.079,
+        0.866,
+        0.992
+      ],
+      "fine_vs_universal_ci": [
+        1.314,
+        0.925,
+        1.831,
+        1.0
+      ]
+    },
+    "floor20_bps10": {
+      "ex_illiq": {
+        "universal": 0.293,
+        "coarse": 1.346,
+        "fine": 1.577,
+        "oracle": 1.622
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.232,
+        -0.085,
+        0.612,
+        0.932
+      ],
+      "fine_vs_universal_ci": [
+        1.285,
+        0.922,
+        1.734,
+        1.0
+      ]
+    },
+    "floor20_bps20": {
+      "ex_illiq": {
+        "universal": 0.05,
+        "coarse": 0.969,
+        "fine": 1.277,
+        "oracle": 1.363
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.308,
+        0.018,
+        0.666,
+        0.979
+      ],
+      "fine_vs_universal_ci": [
+        1.226,
+        0.871,
+        1.692,
+        1.0
+      ]
+    },
+    "floor20_bps30": {
+      "ex_illiq": {
+        "universal": -0.193,
+        "coarse": 0.592,
+        "fine": 0.975,
+        "oracle": 1.104
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.384,
+        0.082,
+        0.75,
+        0.996
+      ],
+      "fine_vs_universal_ci": [
+        1.168,
+        0.855,
+        1.609,
+        1.0
+      ]
+    },
+    "floor30_bps5": {
+      "ex_illiq": {
+        "universal": 0.491,
+        "coarse": 1.502,
+        "fine": 1.642,
+        "oracle": 1.821
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.141,
+        -0.193,
+        0.546,
+        0.793
+      ],
+      "fine_vs_universal_ci": [
+        1.151,
+        0.822,
+        1.547,
+        1.0
+      ]
+    },
+    "floor30_bps10": {
+      "ex_illiq": {
+        "universal": 0.375,
+        "coarse": 1.325,
+        "fine": 1.502,
+        "oracle": 1.694
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.178,
+        -0.134,
+        0.553,
+        0.861
+      ],
+      "fine_vs_universal_ci": [
+        1.128,
+        0.811,
+        1.533,
+        1.0
+      ]
+    },
+    "floor30_bps20": {
+      "ex_illiq": {
+        "universal": 0.142,
+        "coarse": 0.971,
+        "fine": 1.223,
+        "oracle": 1.439
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.252,
+        -0.068,
+        0.652,
+        0.938
+      ],
+      "fine_vs_universal_ci": [
+        1.081,
+        0.769,
+        1.454,
+        1.0
+      ]
+    },
+    "floor30_bps30": {
+      "ex_illiq": {
+        "universal": -0.091,
+        "coarse": 0.617,
+        "fine": 0.933,
+        "oracle": 1.185
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.316,
+        -0.161,
+        0.83,
+        0.908
+      ],
+      "fine_vs_universal_ci": [
+        1.024,
+        0.723,
+        1.347,
+        1.0
+      ]
+    },
+    "floor50_bps5": {
+      "ex_illiq": {
+        "universal": 0.459,
+        "coarse": 1.317,
+        "fine": 1.475,
+        "oracle": 1.611
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.158,
+        -0.273,
+        0.58,
+        0.765
+      ],
+      "fine_vs_universal_ci": [
+        1.016,
+        0.728,
+        1.339,
+        1.0
+      ]
+    },
+    "floor50_bps10": {
+      "ex_illiq": {
+        "universal": 0.355,
+        "coarse": 1.176,
+        "fine": 1.37,
+        "oracle": 1.496
+      },
+      "coarse_venue": "small",
+      "fine_vs_coarse_ci": [
+        0.193,
+        -0.217,
+        0.662,
+        0.816
+      ],
+      "fine_vs_universal_ci": [
+        1.015,
+        0.725,
+        1.32,
+        1.0
+      ]
+    },
+    "floor50_bps20": {
+      "ex_illiq": {
+        "universal": 0.147,
+        "coarse": 0.519,
+        "fine": 1.159,
+        "oracle": 1.268
+      },
+      "coarse_venue": "mid",
+      "fine_vs_coarse_ci": [
+        0.64,
+        0.202,
+        1.157,
+        0.996
+      ],
+      "fine_vs_universal_ci": [
+        1.012,
+        0.701,
+        1.339,
+        1.0
+      ]
+    },
+    "floor50_bps30": {
+      "ex_illiq": {
+        "universal": -0.061,
+        "coarse": 0.284,
+        "fine": 0.947,
+        "oracle": 0.947
+      },
+      "coarse_venue": "mid",
+      "fine_vs_coarse_ci": [
+        0.664,
+        0.241,
+        1.135,
+        0.998
+      ],
+      "fine_vs_universal_ci": [
+        1.009,
+        0.713,
+        1.321,
+        1.0
+      ]
+    }
+  },
+  "note": "4 arms: universal=all-universe venue; coarse=ONE train-chosen venue for whole book; fine=each factor to its TRAIN-best venue; oracle=lookahead best venue. All long-only, OOS test half."
+}

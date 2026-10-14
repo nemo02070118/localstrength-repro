@@ -1,0 +1,49 @@
+{
+  "market": "US OSAP (osap_ls_*; long-short factor panels)",
+  "n_disc": 94,
+  "venues": [
+    "vw",
+    "nyse",
+    "me20",
+    "wide"
+  ],
+  "test": [
+    "1975-07",
+    "2024-12"
+  ],
+  "coarse_venue": "wide",
+  "train_best_single_venue": "nyse",
+  "per_venue_oos_sharpe": {
+    "vw": 0.849,
+    "nyse": 0.837,
+    "me20": 0.679,
+    "wide": 1.302
+  },
+  "sharpe": {
+    "universal": 0.8486948902988832,
+    "coarse": 1.302433790399738,
+    "fine": 1.1217126522999872,
+    "oracle": 1.4467670723649362
+  },
+  "ci": {
+    "coarse_vs_universal": [
+      0.454,
+      0.255,
+      0.664,
+      1.0
+    ],
+    "fine_vs_universal": [
+      0.273,
+      0.088,
+      0.461,
+      0.999
+    ],
+    "fine_vs_coarse": [
+      -0.181,
+      -0.281,
+      -0.087,
+      0.0
+    ]
+  },
+  "note": "4-arm venue routing, same method as A-share. universal=vw (large-cap hurdle venue). All OOS test half."
+}

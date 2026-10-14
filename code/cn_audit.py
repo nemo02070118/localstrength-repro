@@ -1,10 +1,11 @@
 """Cell-level audit: pull every load-bearing number from the result JSONs so the
 paper can be reconciled line by line. Prints an authoritative ledger."""
-import os
 import json
+import os
 from pathlib import Path
 
-H = Path(os.environ.get("LOCALSTRENGTH_RESULTS", str(Path(__file__).resolve().parent.parent / "results")))
+H = Path(os.environ.get("LOCALSTRENGTH_RESULTS",
+                        str(Path(__file__).resolve().parent.parent / "results")))
 def L(n): return json.loads((H / n).read_text())
 
 rc = L('cn_resurrection_coarse.json')['hurdles']['1.96']
@@ -82,3 +83,82 @@ print(f"shuffled-labels placebo: p(placebo>=true)="
       f"{pf['placebo_shuffled_labels']['emp_p_true_ge_placebo']:.3f}")
 for k, v in pf['fdr_screens'].items():
     print(f"  {k:10s}: N={v['n_disc']:>3}  gain={v['gain']:+.3f}")
+
+og = L('cn_oracle_gap.json'); ec = L('cn_economics.json'); me = L('cn_mechanism.json')
+print()
+print("=" * 60)
+print("LEDGER F -- MIRAGES + MECHANISM (Sections 7-10)")
+print("=" * 60)
+print(f"oracle look-ahead SR = {og['sr_oracle_lookahead']:.3f}  "
+      f"OOS train-pick = {og['sr_oracle_oos_trainpick']:.3f}  coarse = {og['sr_coarse']:.3f}")
+print(f"look-ahead gap = {og['gap_total_lookahead']:+.3f}  "
+      f"null selection bias = {og['gap_null_selection_noise_mean']:+.3f} "
+      f"CI {og['gap_null_ci95']}")
+print("weighting alpha vs 6F+BAB (small-cap venue):")
+for s in ('RP', 'MV', 'HRP'):
+    a = ec['schemes'][s]['alpha_vs_6F_plus_BAB']
+    print(f"   {s:4s}: alpha = {a['alpha_ann_pct']:+.2f}%/yr  t = {a['t']:+.2f}")
+rd = me['risk_decomposition']
+print(f"spread alpha: FF6 = {rd['F6']['alpha_ann_pct']:+.2f}% (t={rd['F6']['t_alpha']:.2f})  "
+      f"FF6+all legs = {rd['F6+all']['alpha_ann_pct']:+.2f}% (t={rd['F6+all']['t_alpha']:.2f})")
+cp = me['capacity']
+print(f"capacity: gross SR {cp['sr_gross']:.2f}; net SR at $1bn/$10bn = "
+      f"{cp['curve'][4]['sr_net']:.3f}/{cp['curve'][6]['sr_net']:.3f}")
+print("cross-asset dispersion intermediary-capital corr:")
+for cls in ('CDS', 'USbond', 'Sov', 'FX', 'Commod'):
+    if cls in me['cross_asset_hkm']:
+        v = me['cross_asset_hkm'][cls]
+        print(f"   {cls:7s}: corr = {v.get('corr_intermediary', float('nan')):+.2f}  "
+              f"disp SR = {v.get('disp_sharpe', float('nan')):.2f}")
+
+print()
+print("=" * 60)
+print("LEDGER G -- RESOLUTION LIMIT: CROSS-MARKET + HEAD-TO-HEAD + LLM")
+print("=" * 60)
+def _opt(n):
+    p = H / n
+    return json.loads(p.read_text()) if p.exists() else None
+uf = _opt('cn_us_fourarm.json')
+if uf:
+    s = uf['sharpe']; ci = uf['ci']
+    print(f"US 4-arm: univ {s['universal']:.3f} -> coarse {s['coarse']:.3f} -> "
+          f"fine {s['fine']:.3f} -> oracle {s['oracle']:.3f}")
+    print(f"   coarse-vs-univ {ci['coarse_vs_universal'][0]:+.3f} CI"
+          f"[{ci['coarse_vs_universal'][1]},{ci['coarse_vs_universal'][2]}];  "
+          f"fine-vs-coarse {ci['fine_vs_coarse'][0]:+.3f} CI"
+          f"[{ci['fine_vs_coarse'][1]},{ci['fine_vs_coarse'][2]}]")
+asv = _opt('cn_ashare_salvage.json'); arg = _opt('cn_ashare_rigor.json')
+if asv:
+    e = asv['base_combo_test_sharpe_ex_illiq']; c = asv['base_ci_ex_illiq']
+    print(f"A-share: univ {e['universal']:.3f} -> coarse {e['coarse']:.3f} -> "
+          f"fine {e['fine']:.3f} -> oracle {e['oracle']:.3f}")
+    print(f"   coarse-vs-univ {c['coarse_vs_universal']['point']:+.3f} CI"
+          f"[{c['coarse_vs_universal']['lo2.5']},{c['coarse_vs_universal']['hi97.5']}]")
+if arg:
+    sp = arg['R1_spanning']['fine_vs_mkt_canon']; pl = arg['R2_placebo']
+    print(f"   A spanning fine vs mkt+canon alpha {sp['alpha_ann_pct']:+.2f}%/yr "
+          f"t={sp['t_alpha']:.2f}; placebo z={pl['z_true_vs_placebo']:.2f} "
+          f"p={pl['emp_p_true_ge']:.3f}; FDR {arg['R3_fdr']['n_pass']}/{arg['R3_fdr']['n_tests']}")
+lp = _opt('cn_law_predicts.json')
+if lp:
+    for mk in ('US', 'A-share'):
+        r = lp['markets'][mk]
+        print(f"   law {mk}: lambda={r['lambda']:+.3f} tau={r['tau_m1']:+.3f} "
+              f"predicted_capture={r['predicted_capture_frac']} "
+              f"realized={r['realized_capture_frac']}")
+hh = _opt('cn_headtohead.json')
+if hh:
+    si = hh['spanning_salvage_increment']; rv = hh['reverse_proxy_increment']
+    print(f"   head-to-head: salvage vs FF6+BAB {si['vs_FF6_BAB_only']['alpha_ann_pct']:+.2f}% "
+          f"t={si['vs_FF6_BAB_only']['t']:.1f}; vs RP {si['vs_risk_parity']['alpha_ann_pct']:+.2f}% "
+          f"t={si['vs_risk_parity']['t']:.1f}; reverse RP {rv['risk_parity_vs_salvage']['alpha_ann_pct']:+.2f}% "
+          f"t={rv['risk_parity_vs_salvage']['t']:.1f}")
+dl = _opt('cn_llm_deff.json'); lsv = _opt('cn_llm_salvage.json')
+if dl:
+    em = dl['empirical_local_llm']
+    print(f"   LLM d_eff: N={em['N']} d_eff={em['d_eff']:.1f} kappa_naive={em['kappa_naive']:.2f} "
+          f"kappa_honest={em['kappa_honest']:.2f} wrongly_killed={em['frac_wrongly_killed']:.3f}")
+if lsv:
+    pa = lsv['part_a_local_6960']
+    print(f"   LLM pool: killed {pa['frac_killed_hurdle_1p96']:.3f} ({pa['n_killed']}) "
+          f"median|t|={pa['median_abs_t']:.2f}")

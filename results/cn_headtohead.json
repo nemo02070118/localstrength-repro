@@ -1,0 +1,41 @@
+{
+  "n_disc": 94,
+  "test": [
+    "1975-07",
+    "2024-12"
+  ],
+  "raw_sharpe": {
+    "salvage_coarse": 1.302433790399738,
+    "P1_universal": 0.8486948902988832,
+    "P2_risk_parity": 1.5492288749228567
+  },
+  "spanning_salvage_increment": {
+    "vs_universal": {
+      "alpha_ann_pct": 3.2780014868349996,
+      "t": 9.508658899338771,
+      "n": 417
+    },
+    "vs_risk_parity": {
+      "alpha_ann_pct": 0.21032932542189142,
+      "t": 4.2960124668821456,
+      "n": 417
+    },
+    "vs_FF6_BAB_only": {
+      "alpha_ann_pct": 3.619090263597693,
+      "t": 10.633380682758176,
+      "n": 417
+    }
+  },
+  "reverse_proxy_increment": {
+    "risk_parity_vs_salvage": {
+      "alpha_ann_pct": -0.1491767877193057,
+      "t": -2.735875792428003,
+      "n": 417
+    },
+    "universal_vs_salvage": {
+      "alpha_ann_pct": 0.030099958549743393,
+      "t": 0.08637046915648339,
+      "n": 417
+    }
+  }
+}

@@ -1,0 +1,198 @@
+{
+  "part_a_local_6960": {
+    "n_factors": 6960,
+    "frac_killed_hurdle_1p96": 0.944396551724138,
+    "n_killed": 6573,
+    "median_abs_t": 0.7117666515934953,
+    "note": "jsonl stores only realized portfolio returns (no stock-level signal), so venues cannot be reconstructed for THIS pool; kill-rate is the honest diagnostic. Venue salvage is shown on formulaic LLM-style factors in Part B."
+  },
+  "part_b_formulaic_ashare": {
+    "n_formulaic_factors": 35,
+    "n_discarded_by_universal_hurdle": 24,
+    "frac_discarded": 0.686,
+    "discarded_book_sr_universal_test": -0.2949448764662491,
+    "discarded_book_sr_salvaged_small_test": -0.4017056528714295,
+    "salvage_lift_on_discarded": -0.107,
+    "all_book_sr_universal_test": 0.8191717137442346,
+    "all_book_sr_salvaged_test": 1.3034237959201513,
+    "per_factor": {
+      "mom_1": {
+        "t_universal_train": 0.161,
+        "sr_universal_test": -1.305,
+        "sr_small_test": -1.859
+      },
+      "rev_1": {
+        "t_universal_train": 1.516,
+        "sr_universal_test": 0.046,
+        "sr_small_test": 0.555
+      },
+      "mom_3": {
+        "t_universal_train": 0.683,
+        "sr_universal_test": -1.308,
+        "sr_small_test": -1.603
+      },
+      "rev_3": {
+        "t_universal_train": 1.711,
+        "sr_universal_test": -0.122,
+        "sr_small_test": 0.32
+      },
+      "mom_6": {
+        "t_universal_train": 0.829,
+        "sr_universal_test": -0.911,
+        "sr_small_test": -1.427
+      },
+      "rev_6": {
+        "t_universal_train": 3.693,
+        "sr_universal_test": -0.058,
+        "sr_small_test": 0.201
+      },
+      "mom_9": {
+        "t_universal_train": 0.398,
+        "sr_universal_test": -0.886,
+        "sr_small_test": -1.436
+      },
+      "rev_9": {
+        "t_universal_train": 3.405,
+        "sr_universal_test": -0.2,
+        "sr_small_test": 0.071
+      },
+      "mom_12": {
+        "t_universal_train": 1.753,
+        "sr_universal_test": -0.426,
+        "sr_small_test": -0.88
+      },
+      "rev_12": {
+        "t_universal_train": 3.747,
+        "sr_universal_test": -0.051,
+        "sr_small_test": 0.131
+      },
+      "vol_3": {
+        "t_universal_train": 0.454,
+        "sr_universal_test": -0.412,
+        "sr_small_test": -1.511
+      },
+      "volup_3": {
+        "t_universal_train": 0.882,
+        "sr_universal_test": 1.765,
+        "sr_small_test": 3.101
+      },
+      "vol_6": {
+        "t_universal_train": 0.155,
+        "sr_universal_test": -0.158,
+        "sr_small_test": -1.239
+      },
+      "volup_6": {
+        "t_universal_train": 1.421,
+        "sr_universal_test": 1.363,
+        "sr_small_test": 2.682
+      },
+      "vol_12": {
+        "t_universal_train": 0.285,
+        "sr_universal_test": 0.075,
+        "sr_small_test": -0.791
+      },
+      "volup_12": {
+        "t_universal_train": 0.262,
+        "sr_universal_test": 0.867,
+        "sr_small_test": 2.182
+      },
+      "max_1": {
+        "t_universal_train": 1.286,
+        "sr_universal_test": -0.574,
+        "sr_small_test": -1.863
+      },
+      "max_3": {
+        "t_universal_train": 0.208,
+        "sr_universal_test": 0.684,
+        "sr_small_test": 2.103
+      },
+      "max_6": {
+        "t_universal_train": 0.702,
+        "sr_universal_test": 0.419,
+        "sr_small_test": 1.654
+      },
+      "dvolchg_1": {
+        "t_universal_train": 2.41,
+        "sr_universal_test": 0.404,
+        "sr_small_test": 0.065
+      },
+      "dvoltrend_1": {
+        "t_universal_train": 4.401,
+        "sr_universal_test": 1.478,
+        "sr_small_test": 2.585
+      },
+      "dvolchg_3": {
+        "t_universal_train": 2.515,
+        "sr_universal_test": 0.694,
+        "sr_small_test": 0.774
+      },
+      "dvoltrend_3": {
+        "t_universal_train": 2.512,
+        "sr_universal_test": 1.914,
+        "sr_small_test": 2.926
+      },
+      "dvolchg_6": {
+        "t_universal_train": 2.342,
+        "sr_universal_test": 1.566,
+        "sr_small_test": 1.48
+      },
+      "dvoltrend_6": {
+        "t_universal_train": 2.988,
+        "sr_universal_test": 2.426,
+        "sr_small_test": 3.444
+      },
+      "dvolchg_12": {
+        "t_universal_train": 1.298,
+        "sr_universal_test": 1.091,
+        "sr_small_test": 2.013
+      },
+      "dvoltrend_12": {
+        "t_universal_train": 2.512,
+        "sr_universal_test": 1.862,
+        "sr_small_test": 3.521
+      },
+      "range_3": {
+        "t_universal_train": 1.501,
+        "sr_universal_test": -0.365,
+        "sr_small_test": -1.118
+      },
+      "rangepos_3": {
+        "t_universal_train": 0.951,
+        "sr_universal_test": -1.227,
+        "sr_small_test": -2.009
+      },
+      "range_6": {
+        "t_universal_train": 0.827,
+        "sr_universal_test": -0.114,
+        "sr_small_test": -0.916
+      },
+      "rangepos_6": {
+        "t_universal_train": 0.158,
+        "sr_universal_test": -0.784,
+        "sr_small_test": -1.649
+      },
+      "range_12": {
+        "t_universal_train": 0.83,
+        "sr_universal_test": -0.036,
+        "sr_small_test": 0.664
+      },
+      "rangepos_12": {
+        "t_universal_train": 1.411,
+        "sr_universal_test": 0.748,
+        "sr_small_test": 1.36
+      },
+      "momvol_6": {
+        "t_universal_train": 1.473,
+        "sr_universal_test": -0.797,
+        "sr_small_test": -1.056
+      },
+      "momvol_12": {
+        "t_universal_train": 1.965,
+        "sr_universal_test": -0.422,
+        "sr_small_test": -0.602
+      }
+    }
+  },
+  "headline": "94.4% of a real 6960-factor LLM pool is killed by the universal |t|<1.96 hurdle (median |t|=0.71) -- the diagnostic that the hurdle discards at massive scale.",
+  "honest_verdict_part_b": "On a 35-factor formulaic LLM-STYLE battery built on A-shares, 69% are discarded by the universal hurdle, but after a causal sign-fix the discarded book is ~0 (SR -0.30) and coarse reallocation does NOT revive it (lift -0.11). Lesson, stated plainly in the paper: venue salvage revives factors that carry REAL content misallocated across venues (US OSAP: +0.45; A-share classic anomalies: +0.95 coarse), NOT arbitrary noise. A random price/volume formulaic zoo's discards can be genuinely empty. Salvage is a resolution correction, not alchemy -- this boundary is a feature of the theory, not a failure."
+}

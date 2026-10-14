@@ -1,0 +1,39 @@
+{
+  "method": "annual walk-forward: expanding-window venue selection, trade next 12m; no look-ahead in routing",
+  "US": {
+    "n_disc": 1,
+    "span": [
+      "1936-01",
+      "2024-12"
+    ],
+    "sharpe": {
+      "universal": 0.039935023264446305,
+      "coarse_wide": 0.22150878826102596,
+      "fine": 0.20659244932979615
+    },
+    "lift_coarse_vs_universal": 0.182,
+    "lift_fine_vs_universal": 0.167,
+    "lift_fine_vs_coarse": -0.015
+  },
+  "A_share": {
+    "n_factors": 5,
+    "venues": [
+      "small",
+      "mid",
+      "large",
+      "all"
+    ],
+    "span": [
+      "2012-01",
+      "2026-01"
+    ],
+    "sharpe": {
+      "universal": 0.2247198618908406,
+      "coarse": 0.856595587757414,
+      "fine": 1.0036297858465186
+    },
+    "lift_coarse_vs_universal": 0.632,
+    "lift_fine_vs_universal": 0.779,
+    "lift_fine_vs_coarse": 0.147
+  }
+}

@@ -10,17 +10,19 @@
   "predicted": {
     "single (m=1)": {
       "tau": 0.7759956518486908,
-      "q2": 0.0
+      "q2": 0.4369355583956143
     },
     "family (m~13)": {
       "tau": 10.087943474032981,
-      "q2": 0.9004209744766171
+      "q2": 0.9098119500390749
     },
     "pool (m=N)": {
       "tau": 72.94359127377693,
-      "q2": 0.9862224918717787
+      "q2": 0.986476177545969
     }
   },
   "empirical_single_residual_rho": 0.07749963079252058,
-  "note": "q2 at pool resolution ~ coarse capture; q2 at single ~ 0 ~ rho"
+  "law": "q2(tau)=tau/(1+tau), tau=m*var_cross/sigma2 (common-mean attenuation)",
+  "m_star_meaning": "scale where tau=1 and q2=1/2 (soft half-recovery, not a hard wall)",
+  "note": "q2 rises smoothly; pool resolution near-full recovery, single-factor ~1/2 at the half-recovery scale but drops to the empirical residual rho once idiosyncratic eps dominates u"
 }

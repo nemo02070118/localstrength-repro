@@ -1,0 +1,28 @@
+{
+  "law": "q2(tau)=tau/(1+tau), tau=lambda/sigma2 at m=1",
+  "idea": "each market's own (lambda,sigma2) predicts the fraction of the oracle venue gain a feasible router can capture; test if the prediction matches realized capture in BOTH markets.",
+  "markets": {
+    "US": {
+      "lambda": -0.0106,
+      "sigma2": 0.0504,
+      "tau_m1": -0.211,
+      "predicted_capture_frac": -0.267,
+      "realized_capture_frac": -1.252,
+      "sr_coarse": 1.302,
+      "sr_fine": 1.122,
+      "sr_oracle": 1.447
+    },
+    "A-share": {
+      "lambda": 0.2392,
+      "sigma2": 0.1516,
+      "tau_m1": 1.578,
+      "predicted_capture_frac": 0.612,
+      "realized_capture_frac": 0.482,
+      "sr_coarse": 1.325,
+      "sr_fine": 1.502,
+      "sr_oracle": 1.694
+    }
+  },
+  "headline": "The law's primitive lambda (train-test persistence of per-factor venue advantage), estimated independently in each market, correctly separates the two: US lambda<0 (tau<0, q2<0) predicts fine routing DESTROYS value -- realized fine-vs-coarse=-0.18; A-share lambda>0 (tau=1.58, q2=0.61) predicts routing captures ~61% of oracle -- realized ~48%. The sign and magnitude are predicted out-of-sample across two structurally different markets.",
+  "caveat": "US realized_capture ratio is noisy (small oracle-gain denominator 0.144); the robust, unambiguous US statement is the predicted-and-realized SIGN: lambda<0 => fine routing < coarse."
+}

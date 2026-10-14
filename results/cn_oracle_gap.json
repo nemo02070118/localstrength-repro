@@ -1,0 +1,22 @@
+{
+  "n_disc": 94,
+  "venues": [
+    "vw",
+    "nyse",
+    "me20",
+    "wide"
+  ],
+  "sr_coarse": 1.302433790399738,
+  "sr_oracle_lookahead": 1.4467670723649362,
+  "sr_oracle_oos_trainpick": 1.1217126522999872,
+  "gap_total_lookahead": 0.14433328196519812,
+  "gap_oos_trainpick": -0.18072113809975088,
+  "gap_null_selection_noise_mean": 0.8488864483786309,
+  "gap_null_ci95": [
+    0.5202770195877734,
+    1.181674647240028
+  ],
+  "gap_genuine_signal": -0.7045531664134328,
+  "fraction_of_bone_that_is_mirage": 5.881432451479318,
+  "verdict": "MEAT IS MOSTLY MIRAGE"
+}

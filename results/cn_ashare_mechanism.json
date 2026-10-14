@@ -1,0 +1,39 @@
+{
+  "market": "China A-share",
+  "spec": "long-only, floor=0.30, cost=10bps; venue = size terciles by dollar-vol",
+  "arbitrage_cost_ladder": {
+    "small": {
+      "idio_vol": 0.027973761782050133,
+      "amihud_x1e9": 62.03996658325195,
+      "dollar_vol": 768714.75
+    },
+    "mid": {
+      "idio_vol": 0.034209657460451126,
+      "amihud_x1e9": 87.61161804199219,
+      "dollar_vol": 1491609.125
+    },
+    "large": {
+      "idio_vol": 0.046549104154109955,
+      "amihud_x1e9": 123.50006866455078,
+      "dollar_vol": 93034536.0
+    }
+  },
+  "mean_abs_premium_by_venue": {
+    "small": 0.4792559675250196,
+    "mid": 0.47951834622458256,
+    "large": 0.45093980371194586
+  },
+  "relation": {
+    "venues_ordered_small_to_large": [
+      "small",
+      "mid",
+      "large"
+    ],
+    "premium_small_minus_large": 0.028316163813073725,
+    "corr_premium_idiovol": -0.9413773099072701,
+    "corr_premium_amihud": -0.906881447171674,
+    "corr_premium_invsize": 0.8685566192518165,
+    "monotone_small_highest": false
+  },
+  "honest_verdict": "In A-shares, after dropping the illiquid bottom 30%, the three size terciles have NEARLY EQUAL mean factor premia (small 0.48 ~ mid 0.48 > large 0.45): the venue effect is weak once micro-caps are excluded, and the crude dollar-vol size proxy conflates liquidity with volatility. The clean limits-to-arbitrage mechanism evidence is the US side (cn_mechanism.json): the reallocation alpha loads positively on illiquidity (t=4.18) and survives F6+all controls at t=3.81. We report the A-share ladder as-is and do not overclaim it."
+}

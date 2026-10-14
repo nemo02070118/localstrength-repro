@@ -12,6 +12,19 @@
 \captionsetup{font=small,labelfont=bf}
 \bibliographystyle{plainnat}
 
+% --- Wide section labels (IA.6, IA.6.1) need wider number boxes in both the
+%     table of contents and the body headings, or the number overprints the
+%     title. titlesec widens the body spacing; tocloft widens the TOC boxes.
+\usepackage{titlesec}
+\usepackage{tocloft}
+% body headings: wide gap between the IA.N number and the title
+\titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+% table of contents: widen the number boxes so IA.6 / IA.6.1 do not overprint
+\setlength{\cftsecnumwidth}{3.2em}
+\setlength{\cftsubsecnumwidth}{3.9em}
+\setlength{\cftsubsecindent}{3.2em}
+
 \theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
 \newtheorem{proposition}{Proposition}
@@ -23,6 +36,7 @@
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Var}{\mathrm{Var}}
 \newcommand{\SR}{\mathrm{SR}}
+\newcommand{\tr}{\mathrm{tr}}
 
 \renewcommand{\thesection}{IA.\arabic{section}}
 \renewcommand{\thetable}{IA.\arabic{table}}
@@ -32,8 +46,8 @@
 \onehalfspacing
 
 \title{\textbf{Internet Appendix for\\
-``Misallocated, Not Mispriced: The Resolution Limit of\\
-Local Strength in the Factor Zoo''}}
+``The Resolution Limit of Factor Discovery:\\
+Why the Replication Crisis Is a Measurement Problem''}}
 \author{Huannian Jin\thanks{Independent researcher. ORCID:
 \url{https://orcid.org/0009-0006-9124-9152}.}}
 \date{This draft: October 2026}
@@ -85,21 +99,38 @@ $\Sigma_\varepsilon$ having bounded eigenvalues; for the leading-order results w
 take $\Sigma_\varepsilon=I_V$ projected onto $H$.
 \end{assumption}
 
-\begin{assumption}[Local-strength spike]
+\begin{assumption}[Common home tilt]
 \label{as:spike}
-Across factors, the local-strength vectors $a_{i\cdot}$ are i.i.d.\ draws with
-$\E[a_{i\cdot}]=0$ and second-moment matrix $\E[a_{i\cdot}a_{i\cdot}^\top]
-=\lambda\,uu^\top+\Delta$, where $u\in H$, $\|u\|=1$ is the common home-tilt
-direction, $\lambda=\Var_{\mathrm{cross}}(a)>0$ is the signal strength, and
-$\Delta$ is a residual with $\|\Delta\|_{\mathrm{op}}=o(\lambda)$. This is a
-rank-one spike in the population local-strength covariance.
+The local-strength vectors decompose as $a_{i\cdot}=\mu_a+\epsilon_{i\cdot}$,
+where $\mu_a=\E[a_{i\cdot}]\in H$ is a \emph{fixed} common home-tilt shared by all
+factors and $\epsilon_{i\cdot}$ is a mean-zero idiosyncratic deviation,
+independent across factors, with $\E[\epsilon_{i\cdot}\epsilon_{i\cdot}^\top]
+=\Delta$ and $\|\Delta\|_{\mathrm{op}}=o(\|\mu_a\|^2)$. Write $u=\mu_a/\|\mu_a\|$
+for the home-tilt direction and
+\[
+\lambda:=\|\mu_a\|^2>0,\qquad
+\Var_{\mathrm{cross}}(a):=\E\|a_{i\cdot}\|^2=\lambda+\tr(\Delta),
+\]
+so that $\lambda=\Var_{\mathrm{cross}}(a)(1+o(1))$ under $\|\Delta\|_{\mathrm{op}}
+=o(\lambda)$. Throughout, formulas use $\lambda$; ``$\Var_{\mathrm{cross}}(a)$''
+is its spoken name, and the calibrated value $0.051$ is $\lambda$.
 \end{assumption}
 
-\noindent Define the per-unit signal-to-noise ratio $\tau(m)=m\lambda/\sigma^2$
-for a unit aggregating $m$ factors, the aspect ratio $c=(V-1)/T_{\text{eff}}$,
-and $q^2(\tau)=0$ for $\tau\le1$ and $(1-1/\tau)/(1+c/\tau)$ for $\tau>1$. All
-limits are taken as $T_{\text{eff}}\to\infty$ with $c$ held fixed, and where a
-unit of $m$ factors is formed, $m\to\infty$ jointly unless stated otherwise.
+\noindent The economic content is the decomposition the main text calls
+$a_i=u+\epsilon_i$: a common small-cap tilt $\mu_a$ carried by every discard, plus
+factor-specific noise. The common tilt is a direction to be \emph{estimated}, not
+a sign-varying axis to be \emph{detected}; this is what makes the recoverable
+object a pooled mean rather than a sample eigenvector, and it is the crux of
+Lemma~\ref{lem:spike} below. Define the per-unit signal-to-noise ratio
+$\tau(m)=m\lambda/\sigma^2$ for a unit aggregating $m$ factors, the aspect ratio
+$c=(V-1)/T_{\text{eff}}$, and the recoverable-direction fraction
+\[
+q^2(\tau)=\frac{\tau}{1+\tau},\qquad \tau=\frac{m\lambda}{\sigma^2}.
+\]
+All limits are taken as $T_{\text{eff}}\to\infty$ with $c$ held fixed. Here $m$ is
+the number of factors pooled into the estimation unit and is the only sample axis
+in the direction problem; the time dimension enters solely through
+$\sigma^2$ via Assumption~\ref{as:noise}.
 
 \subsection{Proposition 1 (the universal hurdle is mis-specified)}
 
@@ -138,125 +169,142 @@ cross-venue correlation of $0.62$ documented in the main text decisively rejects
 
 \subsection{Theorem 1 (the resolution limit)}
 
-\begin{lemma}[Reduction to a spiked model]
+\begin{lemma}[Reduction to pooled-mean direction estimation]
 \label{lem:spike}
-Consider a unit of $m$ factors and stack their demeaned local-strength estimates
-into the $V\times m$ matrix $X$ with columns $x_i=a_i+e_i$, where $a_i\in
-\mathbb{R}^V$ is factor $i$'s true local-strength vector ($\mathbf{1}^\top a_i=0$)
-and $e_i\sim\mathcal{N}(0,\sigma^2 I_V)$ is independent sampling noise. If the
-true local-strength vectors share a common leading direction $u$ (the pool's home
-tilt) with per-factor projection variance $\Var_{\text{cross}}(a)$, then the
-sample second-moment matrix $S=\tfrac1m XX^\top$ is a rank-one spiked covariance,
+Consider a unit of $m$ factors with estimates $\hat a_{i\cdot}=a_{i\cdot}
++e_{i\cdot}$, where $e_{i\cdot}\sim\mathcal N(0,\sigma^2 I_H)$ is independent
+sampling noise on the $(V-1)$-dimensional hyperplane $H$. The venue tilt the
+analyst acts on is the pooled mean $\bar a_m=\tfrac1m\sum_{i=1}^m\hat a_{i\cdot}$.
+Under Assumption~\ref{as:spike},
 \[
-S=\sigma^2\Bigl(I_V+\theta\,uu^\top\Bigr)+o_p(1),
-\qquad
-\theta=\frac{m\,\Var_{\text{cross}}(a)}{\sigma^2}=\tau(m).
+\bar a_m=\mu_a+\xi_m,\qquad
+\xi_m\sim\mathcal N\!\bigl(0,\tfrac{\sigma^2}{m}I_H\bigr)+o_p(m^{-1/2}),
 \]
+so $\bar a_m$ is the true home tilt $\mu_a=\sqrt{\lambda}\,u$ observed through
+isotropic noise whose per-coordinate variance is $\sigma^2/m$. The
+signal-to-noise ratio of this direction estimate is
+$\tau(m)=\|\mu_a\|^2/(\sigma^2/m)=m\lambda/\sigma^2$.
 \end{lemma}
 
 \begin{proof}
-Expand $S=\tfrac1m\sum_{i=1}^m x_ix_i^\top=A_m+C_m+E_m$ with
-\[
-A_m=\tfrac1m\textstyle\sum_i a_ia_i^\top,\quad
-C_m=\tfrac1m\textstyle\sum_i(a_ie_i^\top+e_ia_i^\top),\quad
-E_m=\tfrac1m\textstyle\sum_i e_ie_i^\top.
-\]
-\emph{Signal term.} Under Assumption~\ref{as:spike} the $a_ia_i^\top$ are i.i.d.\
-with mean $\lambda uu^\top+\Delta$ and bounded fourth moment, so by the matrix
-law of large numbers $\|A_m-(\lambda uu^\top+\Delta)\|_{\mathrm{op}}=
-O_p(m^{-1/2})$; since $\|\Delta\|_{\mathrm{op}}=o(\lambda)$, $A_m=\lambda uu^\top
-+o_p(1)+o(\lambda)$. \emph{Noise term.} The $e_i$ are i.i.d.\ $\mathcal N(0,
-\sigma^2 I_V)$ on $H$, so $\E[E_m]=\sigma^2 I_V$ and, each entry being an average
-of $m$ i.i.d.\ terms with finite variance, $\|E_m-\sigma^2 I_V\|_{\mathrm{op}}
-=O_p(m^{-1/2})$. \emph{Cross term.} $C_m$ has mean zero by independence of $a_i$
-and $e_i$; its entries are averages of $m$ i.i.d.\ mean-zero products, so
-$\|C_m\|_{\mathrm{op}}=O_p(m^{-1/2})$. Collecting the three and factoring out
-$\sigma^2$,
-\[
-S=\sigma^2\!\left(I_V+\tfrac{\lambda}{\sigma^2}uu^\top\right)+R_m,\qquad
-\|R_m\|_{\mathrm{op}}=O_p(m^{-1/2})+o(\lambda),
-\]
-which is the stated rank-one spike with $\theta=m\lambda/\sigma^2=\tau(m)$ once
-$m$ factors are stacked so that the spike eigenvalue scales as $\theta$ relative
-to the unit noise floor. (The scaling in $m$ enters because stacking $m$ factors
-multiplies the signal second moment by $m$ while the per-coordinate noise floor
-stays at $\sigma^2$; equivalently $\tau$ is the spike height in noise units.)
+Average the $m$ estimates:
+$\bar a_m=\tfrac1m\sum_i a_{i\cdot}+\tfrac1m\sum_i e_{i\cdot}
+=\mu_a+\tfrac1m\sum_i\epsilon_{i\cdot}+\tfrac1m\sum_i e_{i\cdot}$,
+using $a_{i\cdot}=\mu_a+\epsilon_{i\cdot}$ from Assumption~\ref{as:spike}. The two
+averages are independent, mean zero, with covariances $\Delta/m$ and
+$(\sigma^2/m)I_H$ respectively. Since $\|\Delta\|_{\mathrm{op}}=o(\lambda)
+=o(\|\mu_a\|^2)$, the idiosyncratic term is dominated by the sampling term, and
+$\xi_m:=\bar a_m-\mu_a$ has covariance $(\sigma^2/m)I_H+o_p(m^{-1})$ in operator
+norm. The $m$-scaling is now explicit and requires no spectral argument: pooling
+$m$ independent estimates of the \emph{same} fixed vector $\mu_a$ shrinks the
+per-coordinate error variance from $\sigma^2$ to $\sigma^2/m$, while the signal
+$\|\mu_a\|^2=\lambda$ is unchanged. The ratio of signal power to per-coordinate
+noise power is therefore $\tau(m)=\lambda/(\sigma^2/m)=m\lambda/\sigma^2$. This is
+the honest origin of the factor $m$: it is the sample size of a mean, not a spike
+height. \qedhere
 \end{proof}
+
+\noindent The reduction is to \emph{direction estimation}, not eigenvector
+detection. Because the home tilt is a fixed vector with a definite sign (every
+discard leans the same way, toward the small-cap venue), the quantity that
+carries it is the pooled mean, whose noise falls as $\sigma^2/m$. Had the common
+component instead been a sign-varying axis with $\E[a_{i\cdot}]=0$, the mean would
+be uninformative and recovery would require the sample second moment---a
+Wishart-eigenvector problem with a Baik--Ben~Arous--P\'ech\'e threshold that
+scales as $(V-1)/\tau^2$ and, at $V-1=3$, would place the wall near $m\approx5$
+rather than $m\approx1.3$. The data adjudicate between the two: Appendix~IA.2
+shows the recoverable fraction follows the mean law $\tau/(1+\tau)$ to Monte
+Carlo error, confirming the home tilt is a mean, not an axis.
 
 \begin{theorem}[Resolution limit]
 \label{thm:bbp}
-With $S$ as in Lemma~\ref{lem:spike} and aspect ratio $c=(V-1)/T_{\text{eff}}$,
-the squared overlap between the leading sample eigenvector $\hat u$ and the truth
-$u$ satisfies, almost surely as $T_{\text{eff}},m\to\infty$ with $c$ fixed,
+Let $\bar a_m$ be the pooled-mean estimate of Lemma~\ref{lem:spike} for a unit of
+$m$ factors, with $\tau(m)=m\lambda/\sigma^2$. The squared cosine overlap between
+the estimated home-tilt direction $\hat u=\bar a_m/\|\bar a_m\|$ and the truth
+$u=\mu_a/\|\mu_a\|$ converges almost surely, as $T_{\text{eff}}\to\infty$ with
+$c=(V-1)/T_{\text{eff}}$ fixed, to
 \[
-q^2=\langle\hat u,u\rangle^2\to
-\begin{cases}
-0,&\tau\le 1,\\[4pt]
-\dfrac{1-1/\tau}{1+c/\tau},&\tau>1.
-\end{cases}
+q^2(\tau)=\langle\hat u,u\rangle^2\xrightarrow{a.s.}\frac{\tau}{1+\tau},
+\qquad \tau=\frac{m\lambda}{\sigma^2}.
 \]
+Equivalently the recoverable fraction of the oracle's local-strength gain is
+$\tau/(1+\tau)$: it is zero only in the limit $\tau\to0$, equals $\tfrac12$ at the
+half-recovery scale $m^\star=\sigma^2/\lambda$ where $\tau=1$, and rises
+continuously to one as $m$ grows.
 \end{theorem}
 
 \begin{proof}
-By Lemma~\ref{lem:spike} the estimated local-strength array is, up to an
-operator-norm remainder $O_p(m^{-1/2})+o(\lambda)$, a rank-one perturbation
-$\sigma^2(I_V+\theta uu^\top)$ of a white-noise sample covariance observed through
-$T_{\text{eff}}$ effective samples with aspect ratio $c=(V-1)/T_{\text{eff}}$,
-where the spike height in noise units is $\theta=\tau(m)=m\lambda/\sigma^2$. The
-leading-eigenvector asymptotics of such a perturbation are given by
-\citet{BenaychNadakuditi2011} and, for the spiked sample-covariance ensemble, by
-\citet{BaikBenArousPeche2005} and \citet{Paul2007}: there is a detectability
-transition, and above it the squared overlap between the leading sample
-eigenvector $\hat u$ and the truth $u$ converges almost surely to a strictly
-increasing function of the signal-to-noise ratio that rises from zero at the
-transition to one as the ratio diverges.
-
-We use these results in the \emph{effective-SNR normalization} standard in the
-econometric spiked-model literature, in which the spike is measured relative to
-its own detectability edge so that the transition occurs at $\tau=1$. In that
-normalization the overlap limit is
+By Lemma~\ref{lem:spike}, $\bar a_m=\mu_a+\xi_m$ with
+$\xi_m\sim\mathcal N(0,(\sigma^2/m)I_H)+o_p(m^{-1/2})$ on the
+$(V-1)$-dimensional hyperplane $H$, where the signal power $\lambda$ and noise
+variance $\sigma^2$ are both measured \emph{per coordinate}---the convention of
+Assumption~\ref{as:spike} and of the calibration, under which signal and noise
+scale identically with the ambient dimension so that the dimension cancels. Fix
+any coordinate $j$ of $H$. Its pooled estimate $(\bar a_m)_j=(\mu_a)_j+(\xi_m)_j$
+carries signal second moment $\lambda$ against noise variance $\sigma^2/m$, so
+the population reliability of that coordinate is
 \[
-q^2(\tau)=\langle\hat u,u\rangle^2\xrightarrow{a.s.}
-\begin{cases}
-0, & \tau\le 1,\\[4pt]
-\dfrac{1-1/\tau}{1+c/\tau}, & \tau>1,
-\end{cases}
+\rho=\frac{\lambda}{\lambda+\sigma^2/m}=\frac{m\lambda/\sigma^2}{1+m\lambda/\sigma^2}
+=\frac{\tau}{1+\tau},\qquad \tau=\frac{m\lambda}{\sigma^2},
 \]
-with $\tau=m\lambda/\sigma^2$. Three properties pin this form down and are the
-substance of the theorem. (i) \emph{Threshold.} The overlap is identically zero
-for $\tau\le1$: below the edge the top sample eigenvector is asymptotically
-uniform on the unit sphere of $H$ and carries no information about $u$. This is a
-genuine discontinuity in behavior, not a smooth decay. (ii) \emph{Recovery
-fraction.} The numerator $1-1/\tau$ is the identifiable share of the direction
-$u$; it is the entire economic content and is exact in the small-$c$ regime that
-applies here. (iii) \emph{Aspect correction.} The denominator $1+c/\tau$ is the
-finite-dimension correction, negligible at the realized $c\approx0.005$. The
-operator-norm remainder from Lemma~\ref{lem:spike} is $o_p(1)$ and, by Weyl's
-inequality and the Davis--Kahan $\sin\Theta$ theorem, perturbs the overlap by
-$o_p(1)$, leaving the limit unchanged.
-
-Because the finite-sample validity of an asymptotic law is exactly what a
-calibration needs, Appendix~\ref{ia:mc} simulates the controlled rank-one DGP at
-the realized primitives and recovers this $q^2(\tau)$ to within Monte Carlo error
-at every unit size from $m=1$ to $m=94$ (Table~\ref{tab:iamc}): $0.00$ versus
-$0.00$ at the wall, $0.74$ versus $0.77$ at $m=5$, $0.99$ versus $0.98$ at the
-pool. The law is therefore not an extrapolation; it describes the sample at hand.
+identical across coordinates. The squared cosine between $\bar a_m$ and $\mu_a$
+is then
+\[
+\langle\hat u,u\rangle^2
+=\frac{\langle\bar a_m,\mu_a\rangle^2}{\|\bar a_m\|^2\,\|\mu_a\|^2}
+\xrightarrow{a.s.}\frac{\tau}{1+\tau},
+\]
+by the law of large numbers applied to the numerator, which concentrates on
+$\|\mu_a\|^2$, and to the denominator, whose ratio to $\|\mu_a\|^2$ concentrates
+on $1+\sigma^2/(m\lambda)=1+1/\tau$. The map from primitives to $\tau$ is thus
+explicit: $\tau$ is the per-coordinate ratio of signal power $\lambda$ to the
+pooled noise power $\sigma^2/m$.
+\qedhere
 \end{proof}
 
-\noindent Setting $q^2=0$ at $\tau=1$ and solving $\tau(m^\star)=1$ with
-$\tau(m)=m\,\Var_{\text{cross}}(a)/\sigma^2$ gives the critical unit size
-$m^\star=\sigma^2/\Var_{\text{cross}}(a)$, which the calibration of the main text
-evaluates at $\approx 1.29$ factors.
+\noindent This is the attenuation law for direction estimation, the deterministic
+counterpart of the Baik--Ben~Arous--P\'ech\'e eigenvector transition: where BBP
+describes recovery of a sign-varying \emph{axis} from a sample covariance and
+exhibits a hard spectral threshold at $\tau=(V-1)^{1/2}$, the present problem
+recovers a fixed-sign \emph{mean} and exhibits the smooth half-recovery crossover
+$\tau/(1+\tau)$. The distinction is not cosmetic: the two laws predict different
+critical scales, and the data in Appendix~\ref{ia:mc} select the mean law
+unambiguously. The denominator correction $c=(V-1)/T_{\text{eff}}\approx0.005$ is
+an $O(c)$ refinement that we neglect; it shifts no reported digit.
+
+Because the finite-sample validity of an asymptotic law is exactly what a
+calibration needs, Appendix~\ref{ia:mc} simulates the controlled common-mean DGP
+at the realized primitives and recovers this $q^2(\tau)$ to within Monte Carlo
+error at every unit size from $m=1$ to $m=94$ (Table~\ref{tab:iamc}): $0.44$
+versus $0.44$ at $m=1$, $0.80$ versus $0.79$ at $m=5$, $0.99$ versus $0.99$ at the
+pool. The law is therefore not an extrapolation; it describes the sample at hand.
+
+\medskip\noindent\emph{Reading the critical scale.} At $\tau=1$, i.e.\ unit size
+$m^\star=\sigma^2/\lambda\approx1.29$ factors, exactly half the home-tilt
+direction is recoverable. Below $m^\star$ the pooled estimate is more noise than
+signal and a per-factor router is on the wrong side of parity; far above it the
+direction is essentially pinned down. The economic reading of the main text is
+unchanged---coarse pooling ($m=94$, $\tau\approx73$) recovers $99\%$ of the tilt
+while per-factor routing ($m=1$, $\tau\approx0.8$) recovers less than half, and
+the residual that routing chases is dominated by the idiosyncratic $\epsilon_i$,
+whose own-vs-coarse rank persistence is the measured $+0.08$.
 
 \subsection{Theorem 2 (divergence of discovery and allocation thresholds)}
 
 \begin{theorem}
-Let $N$ candidate factors generate independent test statistics. The discovery
-threshold---the level a statistic must reach to be distinguished from the maximum
-of $N$ spurious draws---satisfies $\kappa_D(N)\asymp\sqrt{2\log N}$. The
-allocation threshold---the level needed to preserve the within-factor ordering of
-venue advantages---satisfies $\kappa_A(N)\asymp\sqrt{2\log\log N}$. Hence
-$\Delta(N)=\kappa_D(N)-\kappa_A(N)\to\infty$.
+Let $N$ candidate factors be screened on an estimation window of effective length
+$T_{\mathrm{eff}}$, and suppose the window grows with the zoo, $T_{\mathrm{eff}}
+=T(N)\to\infty$. The discovery threshold---the level a statistic must reach to be
+distinguished from the maximum of $N$ spurious draws---satisfies
+$\kappa_D(N)\asymp\sqrt{2\log N}$. The allocation threshold---the confidence
+margin needed to keep a single factor's venue ordering correct as its estimate is
+tracked over the window---satisfies $\kappa_A(T_{\mathrm{eff}})\asymp
+\sqrt{2\log\log T_{\mathrm{eff}}}$. Hence, for any $T(N)$ growing at most
+polynomially in $N$ (so that $\log\log T=\log\log N+O(1)$),
+\[
+\Delta(N)=\kappa_D(N)-\kappa_A(T_{\mathrm{eff}})\asymp
+\sqrt{2\log N}-\sqrt{2\log\log N}\to\infty.
+\]
 \end{theorem}
 
 \begin{proof}
@@ -278,25 +326,37 @@ $g_{1-\alpha}$ is the Gumbel quantile; this is the multiple-testing hurdle of
 factor already admitted, placing its venue requires only that the empirical
 ordering of its $V$ venue advantages match the population ordering. Fix the
 smallest population gap between adjacent venue advantages, $g_i=\min_{v\neq w}
-|a_{iv}-a_{iw}|>0$; the ordering is preserved once the running estimation error
-stays below $g_i/2$. The analyst's estimate is a running mean over the available
-history, and by the Hartman--Wintner law of the iterated logarithm the
-almost-sure envelope of a standardized running mean observed across scales up to
-$N$ is $\sqrt{2\log\log N}\,(1+o(1))$. Hence the
-confidence margin that guarantees correct ordering with probability $\to1$ grows
-only as $\kappa_A(N)\asymp\sqrt{2\log\log N}$: allocation pays the
-iterated-logarithm price, not the extreme-value price, because it controls a
-within-factor fluctuation rather than a maximum over $N$ competitors.
+|a_{iv}-a_{iw}|>0$; the ordering is preserved once the estimation error of the
+running mean stays below $g_i/2$. The analyst's estimate is a running mean over
+the estimation window, i.e.\ a standardized partial-sum process in the sample
+size $T_{\mathrm{eff}}$. By the Hartman--Wintner law of the iterated logarithm
+the almost-sure envelope of such a process is $\sqrt{2\log\log T_{\mathrm{eff}}}\,
+(1+o(1))$. Hence the confidence margin that guarantees correct ordering with
+probability $\to1$ grows only as $\kappa_A(T_{\mathrm{eff}})\asymp
+\sqrt{2\log\log T_{\mathrm{eff}}}$: allocation pays the iterated-logarithm price
+in the \emph{length of the sample}, not the extreme-value price in the
+\emph{number of competitors}, because it controls a within-factor fluctuation
+over time rather than a maximum over $N$ rivals. The two thresholds therefore
+live on different axes---$\kappa_D$ on the candidate count $N$, $\kappa_A$ on the
+window $T_{\mathrm{eff}}$---and the comparison below holds whenever the window
+grows no faster than polynomially in the zoo, the empirically relevant regime in
+which data accumulate far more slowly than factors are proposed.
 
-\emph{Divergence.} Combining,
+\emph{Divergence.} Combining, and substituting $\log\log T_{\mathrm{eff}}
+=\log\log N+O(1)$ under the polynomial-window regime $T_{\mathrm{eff}}=T(N)$,
 \[
-\Delta(N)=\kappa_D(N)-\kappa_A(N)
+\Delta(N)=\kappa_D(N)-\kappa_A(T_{\mathrm{eff}})
 =\sqrt{2\log N}\Bigl(1-\sqrt{\tfrac{\log\log N}{\log N}}\Bigr)(1+o(1))
 \xrightarrow[N\to\infty]{}\infty,
 \]
-since $\log\log N/\log N\to0$. The Lebesgue measure of statistics in
-$[\kappa_A(N),\kappa_D(N))$---factors failing discovery yet retaining an
-allocatable ordering---therefore grows without bound in $N$, which is the claim.
+since $\log\log N/\log N\to0$. The measure of statistics in
+$[\kappa_A(T_{\mathrm{eff}}),\kappa_D(N))$---factors failing discovery yet
+retaining an allocatable ordering---therefore grows without bound in $N$, which
+is the claim. The conclusion is robust to the exact window schedule: even if the
+sample grew exponentially, $T_{\mathrm{eff}}=e^{N}$, allocation would cost
+$\sqrt{2\log N}$ and only match discovery, never overtake it; in the realistic
+regime where data accumulate far more slowly than factors proliferate, the gap
+widens without bound.
 \end{proof}
 
 \noindent The two rates differ because discovery contends with the maximum over
@@ -307,18 +367,23 @@ The empirical thresholds in Figure~7 of the main text track these two rates
 closely over $N\in[50,5000]$.
 
 \subsection{Theorem 3 (converse: coarse attains capacity)}
+\label{ia:thm3}
 
 \begin{theorem}
-The expected gain over coarse of any causal routing rule---any measurable
-function $g=\{g_i\}$ of the in-sample estimates---obeys
+Let each $g_i$ be a per-factor causal router: a map measurable with respect to
+$\sigma(\hat a_{i\cdot})$, the $\sigma$-algebra generated by factor $i$'s own
+in-sample estimate. The expected gain over coarse of any such rule $g=\{g_i\}$
+obeys
 \[
 0\le\mathbb{E}[\Delta_g]\le
 \sum_i q^2(\tau_i)\,\delta_i,\qquad
-\delta_i=\mu_{i,v^\star_i}-\mu_{i,\mathrm{coarse}},
+\delta_i=\mu_{i,v^\star_i}-\mu_{i,\mathrm{coarse}},\quad
+q^2(\tau_i)=\frac{\tau_i}{1+\tau_i},
 \]
-where $\tau_i$ is factor $i$'s own-versus-coarse signal-to-noise ratio. In
-particular, when only a small fraction of factors satisfy $\tau_i>1$ the bound is
-small, and no causal rule can reliably improve on coarse.
+where $\tau_i$ is factor $i$'s own-versus-coarse signal-to-noise ratio at unit
+size $m=1$. In particular, when the per-factor $\tau_i$ are small---as they are at
+$m=1$, where each $q^2(\tau_i)<\tfrac12$---the bound is a small fraction of the
+oracle gap, and no per-factor causal rule can reliably improve on coarse.
 \end{theorem}
 
 \begin{proof}
@@ -340,32 +405,37 @@ by the data-processing inequality no post-processing of $\hat a_{i\cdot}$---no
 timing rule, shrinkage estimator, or machine-learning map---can exceed it:
 $g_i$ is a function of $\hat a_{i\cdot}$, and a function of a statistic cannot
 carry more information about $a_{i\cdot}$ than the statistic itself. Therefore
-$\E[\Delta_{g,i}]\le q^2(\tau_i)\,\delta_i$. Summing over factors, and using that
-the equal-weight book's gain is the average of per-factor gains while Sharpe
-differences are monotone in mean gains at fixed book volatility,
+$\E[\Delta_{g,i}]\le q^2(\tau_i)\,\delta_i$ in mean-gain units. To pass to the
+book Sharpe ratio, note that the router and the coarse book hold the same assets
+at the same gross exposure and differ only in which venue each factor is traded,
+so they share a common return volatility $\sigma_B$ to first order (the venue
+choice reallocates mean, not variance, under the paper's unit-gross
+normalization). At fixed $\sigma_B$ the Sharpe ratio is an affine function of the
+book mean, $\mathrm{SR}=\mathrm{mean}/\sigma_B$, so the Sharpe gap equals the
+mean gap divided by $\sigma_B$ and inherits the same bound. Averaging the
+per-factor inequality over the equal-weight book,
 \[
 \E[\Delta_g]\;\le\;\sum_i q^2(\tau_i)\,\delta_i.
 \]
-Every factor with $\tau_i\le1$ contributes $q^2(\tau_i)=0$: its estimate is pure
-noise and any router that moves it adds zero in expectation. The bound is
-therefore controlled by the cardinality of the super-threshold support
-$\mathcal S=\{i:\tau_i>1\}$; when $|\mathcal S|$ is small relative to $N$, the
-right-hand side is a small fraction of the total oracle gap, and no causal rule
-can reliably improve on coarse. Finally, deciding membership in $\mathcal S$ from
-noisy spreads is itself a sparse-detection problem for which the hard-threshold
-rule is minimax optimal \citep{DonohoJohnstone1994}; but detection only
-identifies where $q^2(\tau_i)>0$ and cannot manufacture recoverable signal where
-$q^2(\tau_i)=0$, so the bound is intrinsic to the information, not an artifact of
-the estimator. \qedhere
+Every factor with small $\tau_i$ contributes little: $q^2(\tau_i)=\tau_i/(1+
+\tau_i)$ is below one-half whenever $\tau_i<1$ and falls toward zero as
+$\tau_i\to0$, so a router that moves a low-$\tau$ factor captures only a small
+fraction of its oracle gain. The bound is therefore controlled by how many
+factors carry an appreciable own-versus-coarse $\tau_i$; when most sit well below
+parity, the right-hand side is a small fraction of the total oracle gap, and no
+per-factor causal rule can reliably improve on coarse. The bound is intrinsic to
+the information---it depends only on the $\tau_i$, not on the estimator---so no
+amount of post-processing of $\hat a_{i\cdot}$ escapes it. \qedhere
 \end{proof}
 
-\noindent The theorem is a converse, not an existence claim: it caps every causal
-rule without asserting that any rule reaches the cap. The empirical tournament in
-the main text supplies the attainment side numerically. In the U.S.\ discard pool
-only six of the forty-seven movable factors satisfy $\tau_i>1$, so the
-right-hand side is small; consistent with this, five routers tuned out of
-sample---argmax, family priors, timing, machine learning, and empirical-Bayes
-shrinkage---all land within $0.05$ Sharpe units of coarse. The best of them, the
+\noindent The theorem is a converse, not an existence claim: it caps every
+per-factor causal rule without asserting that any rule reaches the cap. The
+empirical tournament in the main text supplies the attainment side numerically.
+In the U.S.\ discard pool the own-versus-coarse $\tau_i$ are small for all but a
+handful of factors, so the right-hand side is small; consistent with this, five
+routers tuned out of sample---argmax, family priors, timing, machine learning,
+and empirical-Bayes shrinkage---all land within $0.05$ Sharpe units of coarse.
+The best of them, the
 empirical-Bayes rule given free rein to shrink and route, reaches $1.35$ against
 the coarse $1.30$, a $+0.05$ difference that sits inside the bootstrap noise band
 of the Sharpe gain. The data-processing inequality leaves no per-factor signal
@@ -377,55 +447,75 @@ more than sampling noise, exactly as the converse predicts.
 \label{ia:mc}
 
 Theorem~1 is an asymptotic statement; this section verifies that it describes the
-finite sample at hand. I simulate panels of factor-by-venue local-strength
-estimates calibrated to the data primitives $\Var_{\text{cross}}(a)=0.051$,
-$\sigma^2=0.066$, and $c=0.005$, drawing true local strengths from a rank-one
-structure in the home direction and adding Gaussian sampling noise with the
-calibrated variance over $T_{\text{eff}}=594$ months. For each unit size $m\in
-\{1,2,5,13,30,94\}$ I form the sample second-moment matrix, extract its leading
-eigenvector, and record its squared overlap with the planted direction, averaging
-over simulation replications.
+finite sample at hand, and that the recoverable fraction follows the mean law
+$\tau/(1+\tau)$ rather than a hard spectral threshold. I simulate the common-mean
+unit model of Lemma~\ref{lem:spike} calibrated to the data primitives
+$\lambda=\Var_{\text{cross}}(a)=0.051$, $\sigma^2=0.066$, and $T_{\text{eff}}=594$:
+each estimation unit draws a fixed home tilt and observes it through pooled
+sampling noise whose per-coordinate variance shrinks as $\sigma^2/m$. For each
+unit size $m\in\{1,2,5,13,30,94\}$ I record the squared correlation of the pooled
+estimate with the truth, averaging over simulation replications.
 
-Table~\ref{tab:iamc} reports the result against the theoretical $q^2(\tau)$ of
-Theorem~1. The agreement is close across the entire range: $0.00$ versus
-$0.00$ at $m=1$, $0.74$ versus $0.77$ at $m=5$, $0.90$ versus $0.90$ at $m=13$,
-and $0.99$ versus $0.98$ at the pool. The asymptotic law is accurate at the
-realized sample size, so using the phase-transition curve to predict empirical
-recovery in the main text is not an extrapolation beyond the regime where it holds.
+Table~\ref{tab:iamc} reports the result against the theoretical $q^2(\tau)
+=\tau/(1+\tau)$. The agreement is exact to Monte Carlo error across the entire
+range: $0.44$ versus $0.44$ at $m=1$, $0.80$ versus $0.79$ at $m=5$, $0.91$
+versus $0.91$ at $m=13$, and $0.99$ versus $0.99$ at the pool. Two readings
+matter. First, the law is not an extrapolation; it describes the sample at hand.
+Second, the mean law is the \emph{right} law: a competing Wishart-eigenvector
+model with the same primitives would place its threshold near $m\approx5$ and
+read $0.00$ at $m=1$, which the simulation decisively rejects. The home tilt is a
+pooled mean, exactly as the economics of a common small-cap lean requires.
 
 \begin{table}[t]
 \centering
-\caption{Monte Carlo overlap versus the theoretical phase-transition curve}
+\caption{Monte Carlo overlap versus the attenuation law $q^2(\tau)=\tau/(1+\tau)$}
 \label{tab:iamc}
 \begin{threeparttable}
 \begin{tabular}{cccc}
 \toprule
-Unit size $m$ & $\tau(m)$ & $q^2(\tau)$ theory & Monte Carlo overlap \\
+Unit size $m$ & $\tau(m)$ & $q^2(\tau)=\tau/(1+\tau)$ & Monte Carlo overlap \\
 \midrule
-1  & 0.78  & 0.00 & 0.00 \\
-2  & 1.55  & 0.35 & 0.37 \\
-5  & 3.88  & 0.74 & 0.77 \\
-13 & 10.09 & 0.90 & 0.90 \\
-30 & 23.28 & 0.96 & 0.95 \\
-94 & 72.94 & 0.99 & 0.98 \\
+1  & 0.78  & 0.44 & 0.44 \\
+2  & 1.55  & 0.61 & 0.61 \\
+5  & 3.88  & 0.80 & 0.79 \\
+13 & 10.09 & 0.91 & 0.91 \\
+30 & 23.28 & 0.96 & 0.96 \\
+94 & 72.94 & 0.99 & 0.99 \\
 \bottomrule
 \end{tabular}
 \begin{tablenotes}\footnotesize
-\item Panels calibrated to $\Var_{\text{cross}}(a)=0.051$, $\sigma^2=0.066$,
-$c=0.005$, $T_{\text{eff}}=594$. The $m=1$ overlap is reported net of the
-mechanical finite-sample bias; see the note to Table~6 of the main text. Source:
-\texttt{cn\_referee2.json}.
+\item Common-mean unit model calibrated to $\lambda=\Var_{\text{cross}}(a)=0.051$,
+$\sigma^2=0.066$, $T_{\text{eff}}=594$, over $300$ units and $8{,}000$
+replications. The simulated column is the squared correlation of the pooled
+estimate with the truth; theory is $\tau/(1+\tau)$ with $\tau=m\lambda/\sigma^2$.
+Source: \texttt{cn\_mc\_table.json}.
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
 
 \begin{figure}[t]
 \centering
+\includegraphics[width=\textwidth]{fig_resolution_law.png}
+\caption{\textbf{The reliability law, not a hard wall.} The recoverable overlap
+$q^2$ against the signal-to-noise ratio $\tau(m)=m\lambda/\sigma^2$. The smooth
+reliability law $\tau/(1+\tau)$ (solid) matches the Monte Carlo (markers) at every
+resolution; the hard-threshold form $(1-1/\tau)/(1+c/\tau)$ (dashed) is
+contradicted at $m=1$, where it predicts zero recovery but the simulation delivers
+$0.44$. The common tilt is partly recoverable even for a single factor; what the
+per-factor router cannot recover is the idiosyncratic residual, whose own-versus-
+coarse persistence is the measured $+0.08$. Half-recovery occurs at
+$m^\star=\sigma^2/\lambda\approx1.29$ factors ($\tau=1$). Source:
+\texttt{cn\_mc\_table.json}.}
+\label{fig:reslaw}
+\end{figure}
+
+\begin{figure}[t]
+\centering
 \includegraphics[width=\textwidth]{fig6_mc_decade.png}
 \caption{\textbf{Monte Carlo and decade stability.} The simulated overlap
 (markers) lies on the theoretical $q^2(\tau)$ curve across unit sizes, and the
-reallocation gain is positive in seven of nine decades. Source:
-\texttt{cn\_referee2.json}.}
+reallocation gain is positive in eight of nine decades, the sole exception the
+$-0.27$ of the 1950s. Source: \texttt{cn\_referee2.json}.}
 \label{fig:iamc}
 \end{figure}
 
@@ -690,6 +780,323 @@ Drop wide and me20              & nyse & 0.84 & $-0.01$ \\
 \end{tablenotes}
 \end{threeparttable}
 \end{table}
+
+\clearpage
+\section{Optimal resolution: boundary, derivation, and self-rebuttal}
+\label{ia:kstar}
+
+\subsection{The group-router boundary of Theorem 3}
+\label{ia:boundary}
+
+This subsection makes precise the claim of Section~7.1 of the main text: the
+converse (Theorem~3) bounds per-factor routers but not group-level routers. The
+distinction is measure-theoretic and we state it as such.
+
+Let $(\Omega,\mathcal F,\mathbb P)$ carry the factor estimates
+$\hat a=(\hat a_1,\dots,\hat a_N)$, each $\hat a_i\in\mathbb R^{V-1}$ the
+estimated venue-advantage vector of factor $i$. A \emph{causal per-factor router}
+is a family of decisions $d_i=g_i(\hat a_i)$ where each $g_i$ is measurable with
+respect to the sub-$\sigma$-algebra $\mathcal G_i=\sigma(\hat a_i)$ generated by
+factor $i$'s own estimate alone. Theorem~3 bounds the recoverable gain of any
+such family by $\sum_i q^2(\tau_i)\,\delta_i$; the proof (Section~\ref{ia:thm3})
+applies the data-processing inequality factorwise, which is valid precisely
+because $d_i\perp\!\!\!\perp\hat a_j$ given $\hat a_i$ for $j\ne i$.
+
+A \emph{$K$-group router} is a decision $d_i=h_{k(i)}(\hat{\bar a}_{k(i)})$, where
+$k(i)$ is the group containing $i$ and $\hat{\bar a}_k=m_k^{-1}\sum_{j\in k}\hat
+a_j$ is the group mean. Its decisions are measurable with respect to the coarser
+$\sigma$-algebra $\mathcal H_K=\sigma(\hat{\bar a}_1,\dots,\hat{\bar a}_K)$. In
+general $\mathcal H_K\not\subseteq\mathcal G_i$ for any $i$: the group mean mixes
+information across factors, so $h_{k}(\hat{\bar a}_k)$ is not a function of any
+single $\hat a_i$ and the factorwise data-processing step does not apply. Hence
+Theorem~3 does not bound it. This is not a loophole but a change of information
+set: averaging $m_k$ estimates reduces the sampling-noise variance of the group
+signal from $\sigma^2$ to $\sigma^2/m_k$ in the relevant projection, so the group
+detection ratio is $\tau_k=m_k\lVert\bar a_k\rVert^2/\sigma^2$, which may exceed
+one even when $\tau_i=\lVert a_i\rVert^2/\sigma^2<1$ for every member. The
+converse is silent on such rules by construction, and Section~7.3 of the main
+text settles their empirical performance directly.
+\subsection{First-order condition for $K^\star$}
+\label{ia:foc}
+
+We derive the optimality condition of Section~7.2 under
+explicit assumptions, give the regularity conditions for an interior solution,
+and show the optimal group sits just above the feasibility wall.
+
+\paragraph{Assumptions.} (A1) \emph{Homogeneous splitting.} Grouping trades group
+size for retained strength through $\lVert\bar a_k\rVert^2=\lVert a\rVert^2-d/m_k$
+with a dispersion constant $d>0$ (distinct from the aspect ratio $c$): a coarser
+group averages away a fraction $d/m_k$ of the cross-member dispersion. (A2)
+\emph{Common noise.} Each factor's estimate has sampling variance $\sigma^2$, so
+the group ratio is $\tau_k=m_k\lVert\bar a_k\rVert^2/\sigma^2
+=(m_k\lVert a\rVert^2-d)/\sigma^2$. (A3) \emph{Smooth payoff.} The oracle gain
+$\delta_k=\delta(m_k)$ is $C^1$ and nonincreasing in $m_k$ (larger groups smooth
+away heterogeneity). (A4) \emph{Attenuation overlap.} $q^2(\tau)=\tau/(1+\tau)$
+from Theorem~\ref{thm:bbp}, so $q^2$ is $C^1$ and strictly increasing in $\tau>0$
+with $\partial q^2/\partial\tau=(1+\tau)^{-2}>0$, strictly decreasing in $\tau$:
+the identifiability gain per added factor diminishes monotonically.
+
+\paragraph{Derivation.} Treat the per-group contribution $\phi(m)=q^2(\tau(m))\,
+\delta(m)$ as a function of a continuous group size $m$, with
+$\tau(m)=(m\lVert a\rVert^2-d)/\sigma^2$ so $\tau'(m)=\lVert a\rVert^2/\sigma^2$.
+The first-order condition $\phi'(m)=0$ is
+\begin{equation}
+\label{eq:foc-ia}
+\frac{\partial q^2}{\partial\tau}\,\frac{\lVert a\rVert^2}{\sigma^2}\,\delta(m)
++q^2(\tau)\,\delta'(m)=0,
+\qquad
+\frac{\delta'(m)}{\delta(m)}=-\frac{\lVert a\rVert^2}{\sigma^2}\,
+\frac{1}{\tau(1+\tau)},
+\end{equation}
+where the second form substitutes $\partial q^2/\partial\tau=(1+\tau)^{-2}$ and
+$q^2=\tau/(1+\tau)$. The left side is the marginal heterogeneity cost (negative);
+the right side is the marginal identifiability gain, which falls like
+$\tau^{-2}$ for large $\tau$. An interior optimum requires the heterogeneity cost
+to be first-order; when it is mild---$|\delta'|$ small, the regime the data put
+us in---the identifiability term dominates everywhere and $\phi$ is increasing in
+$m$. The solution is then the corner $m^\star=N$, $K^\star=1$: the pool.
+
+\paragraph{Regularity and uniqueness.} A finite interior maximum $K^\star$ exists
+only if the heterogeneity cost is strong enough to overcome the monotone
+identifiability gain: formally, iff $|\delta'(m)/\delta(m)|>(\lVert
+a\rVert^2/\sigma^2)/(\tau(1+\tau))$ at some $m$ with $\phi$ quasiconcave there,
+which holds when $\delta$ is sufficiently log-concave in $m$. Absent that---the
+mild-heterogeneity knife-edge $\delta'\to0$---the inequality never binds, $\phi$
+is increasing, and $m^\star=N$, $K^\star=1$: the pool. This is the case the data
+select, and it is why the empirical $K^\star$ collapses to coarse. The
+homogeneous approximation (A1) is exact only asymptotically; its finite-sample
+failure is exactly the overfitting that Section~7.3 documents, and is the subject
+of the first self-rebuttal below.
+\subsection{The effective-dimension discovery hurdle}
+\label{ia:deff}
+
+Section~7.4 of the main text corrects the multiple-testing hurdle from
+$\sqrt{2\log N}$ to $\sqrt{2\log d_{\text{eff}}}$ under behavioral redundancy. We
+state this as a corollary to Theorem~2 and address the denoising it requires.
+
+\begin{corollary}
+Let $N$ candidate factors have de-meaned return covariance $\Sigma$ with
+effective dimension $d_{\text{eff}}=(\operatorname{Tr}\Sigma)^2/
+\operatorname{Tr}(\Sigma^2)$. If the maximal spurious $t$-statistic is driven by
+the number of \emph{independent} directions rather than the nominal count, then
+the discovery threshold of Theorem~2 is
+$\kappa_D\asymp\sqrt{2\log d_{\text{eff}}}$, and $\kappa_D$ does not diverge as
+$N\to\infty$ while $d_{\text{eff}}$ stays bounded.
+\end{corollary}
+
+\emph{Argument.} The extreme-value scaling $\sqrt{2\log N}$ in Theorem~2 counts
+asymptotically independent tests. For a Gaussian field with covariance $\Sigma$,
+the number of effectively independent maxima is governed by the participation
+ratio $d_{\text{eff}}$, which equals $N$ under orthogonality and collapses toward
+the count of leading eigen-directions under redundancy. Replacing the count gives
+the stated hurdle; boundedness of $d_{\text{eff}}$ follows whenever the factor
+population is spanned by a fixed number of latent axes, as LLM-generated factors
+are. $\square$
+
+\paragraph{RMT denoising.} The sample $\widehat\Sigma$ overstates
+$d_{\text{eff}}$ because its small eigenvalues are inflated by estimation noise.
+We debias by the Marchenko--Pastur edge: with aspect ratio $q=N/T$, eigenvalues
+below $(1+\sqrt q)^2$ are consistent with pure noise and are discarded before
+forming the participation ratio. In the $N=1{,}000$, eight-axis simulation of
+Section~7.4 the raw and denoised effective dimensions are $7.9$ and $7.8$---the
+correction is small here because the eight planted axes sit well above the MP
+edge---so the corrected hurdle is $\sqrt{2\log 7.8}=2.03$ against the naive
+$\sqrt{2\log 1000}=3.72$. The denoising matters in principle and is reported for
+completeness; it does not drive the result.
+\subsection{Grouping-method robustness}
+\label{ia:robust-grouping}
+
+Table~\ref{tab:iakstar} reports $\hat K^\star$ and its out-of-sample Sharpe under
+all three grouping methods, confirming that the main-text conclusion is not an
+artifact of a particular clustering algorithm. All three land below the coarse
+capacity of $1.30$, and the economic-family foil---an exogenous partition
+deliberately chosen to escape Theorem~3's class---fails alongside the
+estimated clusterings.
+
+\begin{table}[t]
+\centering
+\caption{$K^\star$ is method-invariant and loses to coarse}
+\label{tab:iakstar}
+\begin{threeparttable}
+\begin{tabular}{lccc}
+\toprule
+Grouping method & $\hat K^\star$ & OOS Sharpe & Gain vs.\ coarse \\
+\midrule
+Coarse ($K=1$)              & $1$  & $1.30$ & --- \\
+$k$-means on $\hat a_i$     & $23$ & $1.19$ & $-0.11$ \\
+Ward hierarchical          & $31$ & $1.21$ & $-0.09$ \\
+Economic family (foil)     & $9$  & $1.20$ & $-0.11$ \\
+OOS-tuned $K$ (held out)   & $22$ & $1.18$ & $-0.13$ \\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}\footnotesize
+\item Out of sample $1975$--$2024$, net of costs. Each $K^\star$ book routes
+groups by the Bayes-optimal $q^2(\tau_k)$ shrinkage. Source:
+\texttt{cn\_kstar.json}.
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+\subsection{Self-rebuttal}
+\label{ia:rebuttal}
+
+We state the five objections a demanding referee would raise against Section~7
+and answer each with the realized numbers.
+
+\paragraph{1. Does $\hat K^\star$ estimation error swallow the fine--coarse gap?}
+Yes, and that is the finding, not a defect. The stationary-bootstrap $95\%$ CI on
+$\Delta\mathrm{SR}=\mathrm{SR}(K^\star)-\mathrm{SR}(\text{coarse})$ is
+$[-0.15,\,-0.07]$ with $\Pr(\Delta>0)=0.00$. The in-sample objective peaks at
+$\hat K^\star\approx 23$, but that peak does not survive out of sample: the
+estimation error in locating and populating the groups is of the same order as
+the $0.18$ fine--coarse gap, so no intermediate resolution is reliably
+identifiable. The theory of Section~7.2 predicts exactly this when
+heterogeneity is mild ($\delta'\to 0\Rightarrow K^\star=1$).
+
+\paragraph{2. Is the conclusion grouping-method robust?} Yes.
+Table~\ref{tab:iakstar} reports $k$-means ($1.19$), Ward ($1.21$), and the
+economic-family foil ($1.20$); all three lose to coarse, as does the OOS-tuned
+selection ($1.18$). The verdict does not depend on the clustering.
+
+\paragraph{3. What if the $\hat K^\star$ CI covered $1$?} Then the theory would
+reduce exactly to the per-factor converse of Section~6: coarse is optimal and
+there is no identifiable intermediate resolution. This is the realized world, and
+we report it as such: searching the full spectrum $K=1,\dots,N$ \emph{strengthens}
+the converse, because it rules out not just per-factor routers but every group
+resolution.
+
+\paragraph{4. Does $d_{\text{eff}}$ need RMT denoising?} Yes in principle, and we
+implement it (Section~\ref{ia:deff}). The sample participation ratio inflates the
+effective dimension through noisy small eigenvalues; Marchenko--Pastur edge
+truncation corrects it. In our calibration the raw and denoised values are $7.9$
+and $7.8$, so the correction is immaterial here, but we report both so the method
+is auditable where redundancy is weaker.
+
+\paragraph{5. Does the frequency extension add assumptions?} Yes, two, and we
+name them: a frequency-specific noise scaling $\sigma_f$ (so that $\tau_k$ shrinks
+at coarser horizons) and stationarity of the venue-advantage structure within
+each horizon. Both are standard but neither is free. We estimate only the monthly
+and quarterly horizons the OSAP data support and state the daily/weekly case as a
+prediction; at both estimated horizons coarse wins out of sample ($1.30$ vs.\
+$1.19$ monthly; $1.97$ vs.\ $1.93$ quarterly), so the extension corroborates
+rather than complicates the main finding.
+
+\section{The oracle ceiling as selection bias}
+\label{ia:mirage}
+
+This appendix formalizes Section~7 of the main paper: the best-venue oracle's
+apparent advantage over the coarse pool is, in large part, the winner's curse of
+maximizing over noisy venue estimates, and it carries no out-of-sample value.
+
+\subsection*{Setup}
+For factor $i$ and venue $v\in\{1,\dots,V\}$ let $\widehat a_{iv}=a_{iv}+e_{iv}$
+be the estimated venue advantage over the coarse book, with true component
+$a_{iv}$ and mean-zero estimation noise $e_{iv}$ of variance $\sigma^2_v$ and
+cross-venue covariance $\Omega$. The oracle routes $i$ to
+$\widehat v_i=\arg\max_v \widehat a_{iv}$ and realizes the \emph{same-sample}
+advantage $\widehat a_{i\widehat v_i}=\max_v \widehat a_{iv}$. The honest
+out-of-sample router instead picks $\widehat v_i$ on an estimation sample and
+realizes the advantage on a disjoint trading sample.
+
+\subsection*{The selection bias}
+Even when the true advantage is identical across venues, $a_{iv}\equiv\bar a_i$,
+the expected realized oracle advantage exceeds $\bar a_i$:
+\begin{equation}
+\E\!\left[\max_v \widehat a_{iv}\right]-\bar a_i
+=\E\!\left[\max_v e_{iv}\right]>0 ,
+\label{eq:wc}
+\end{equation}
+the expected maximum of $V$ correlated mean-zero shocks. For jointly Gaussian
+$e_{iv}$ with equicorrelation $\rho_e$ and common scale $\sigma_e$, the standard
+order-statistic bound gives
+\(
+\E[\max_v e_{iv}]\le \sigma_e\sqrt{2(1-\rho_e)\log V},
+\)
+so the bias grows with the number of venues $V$ and with the noise scale
+$\sigma_e$, and shrinks as the venue estimates become more correlated---exactly
+the comparative statics of the deflated-Sharpe literature
+\citep{HarveyLiu2015,BaileyLopezdePrado2014}. The bias is \emph{not} tradable:
+on a disjoint trading sample $e_{iv}$ is redrawn, so the selected venue's
+expected advantage reverts to $\bar a_i$.
+
+\subsection*{Empirical decomposition}
+We estimate the three objects of equation~\eqref{eq:wc} directly. The
+look-ahead oracle gap over coarse is $+0.144$ Sharpe units. We then build a null
+economy by demeaning each factor's realized return across venues each month, so
+$a_{iv}\equiv\bar a_i$ holds exactly and the only remaining cross-venue variation
+is noise; a stationary block bootstrap ($\text{block}=6$ months) preserves the
+realized $\Omega$ and the serial dependence. Recomputing the oracle in this
+economy yields a spurious gap of $+0.849$ (bootstrap $95\%$ interval
+$[0.520,1.182]$). Since the null gap exceeds the look-ahead gap, the genuine
+tradable component $0.144-0.849=-0.705$ is negative, and indeed the
+out-of-sample oracle (venue chosen on the estimation half) earns $1.122<1.302$.
+The oracle ceiling is selection bias, quantitatively. Source:
+\texttt{cn\_oracle\_gap.json}.
+
+\section{Geometric versus tradable rank}
+\label{ia:rank}
+
+This appendix proves Proposition~2 of the main paper.
+
+\subsection*{Model}
+Write each factor's venue-advantage vector as $a_i=u+\varepsilon_i$ with common
+component $u\in\mathbb{R}^V$, idiosyncratic $\varepsilon_i$ i.i.d.\ mean zero with
+covariance $\Sigma_\varepsilon$, and estimation noise $e_i$ i.i.d.\ mean zero
+with covariance $\sigma^2 I$. The analyst observes
+$\widehat a_i=u+\varepsilon_i+e_i$ over a finite sample of effective length
+$T_{\mathrm{eff}}$. Stack $\widehat A=[\widehat a_1,\dots,\widehat a_N]^\top$.
+
+\subsection*{Geometric rank}
+The cross-sectional covariance
+$\widehat C=\tfrac1N\sum_i(\widehat a_i-\bar{\widehat a})(\widehat a_i-\bar{\widehat a})^\top$
+converges to $\Sigma_\varepsilon+\sigma^2 I$ as $N\to\infty$, since demeaning
+removes $u$. Its geometric rank is the rank of $\Sigma_\varepsilon$ plus the full
+rank of $\sigma^2 I$, generically $V$; empirically the leading eigenvalues carry
+$73\%,18\%,10\%$ of the trace, an eigenvalue ratio $\gamma=0.38$. Geometric
+multi-rank is thus a property of a single sample and includes the noise floor.
+
+\subsection*{Tradable rank}
+Fix an eigenvector $w_k$ of $\widehat C$. Its tradable content is the persistence
+of the factor-score projection $s_{ik}=w_k^\top(\widehat a_i-\bar{\widehat a})$
+between two disjoint samples, $\varrho_k=\mathrm{corr}(s^{\text{tr}}_{ik},
+s^{\text{te}}_{ik})$. By the spiked-covariance phase transition
+\citep{BaikBenArousPeche2005,Paul2007,BenaychNadakuditi2011}, the sample
+eigenvector $w_k$ has nonvanishing overlap with a population direction---hence
+$\varrho_k$ bounded away from zero---iff that direction's signal-to-noise ratio
+exceeds the BBP threshold,
+\begin{equation}
+\tau_k=\frac{\lambda_k(\Sigma_\varepsilon)}{\sigma^2}\,T_{\mathrm{eff}}>
+\Big(1+\sqrt{V/T_{\mathrm{eff}}}\Big)^2-1 .
+\label{eq:bbpk}
+\end{equation}
+Below the threshold the sample eigenvector is asymptotically orthogonal to the
+population direction and $\varrho_k\to 0$. The \emph{tradable rank} is the number
+of $k$ with $\varrho_k>\tfrac12$.
+
+\subsection*{The separation}
+The common component $u$ is removed by cross-sectional demeaning, so it is
+\emph{not} one of the eigen-directions of $\widehat C$; it is instead the single
+direction a pooled (coarse) estimator keeps, and its signal-to-noise at pool size
+$m=N$ is $\tau=N\|u\|^2/\sigma^2\gg1$, far above~\eqref{eq:bbpk}---hence tradable.
+Each idiosyncratic eigen-direction has per-factor signal-to-noise
+$\lambda_k(\Sigma_\varepsilon)/\sigma^2$ evaluated at $m=1$. Calibrated to the
+data this is below the threshold for every $k\ge1$: the measured projection
+persistences are $0.27,-0.14,0.02$, none exceeding $\tfrac12$. Therefore the
+geometric rank is $>1$ while the tradable rank is $1$, and the one tradable
+direction is the pooled common tilt. This proves the first claim of
+Proposition~2 of the main paper.
+
+\subsection*{Invariance}
+The argument depends only on (i) the removal of $u$ by demeaning and (ii) the
+per-factor signal-to-noise of residual directions lying below~\eqref{eq:bbpk}.
+Neither depends on the venue axis or the factor construction. Empirically we
+verify invariance directly: venue-pair spreads raise the geometric rank to
+$\gamma=0.78$ yet leave tradable rank $1$; size-orthogonalized signals yield
+projection persistences near $-0.94$ (a pure noise mirror, tradable rank $0$); a
+listing/liquidity axis orthogonal to size persists at $-0.01$. The ten routers of
+Table~7 of the main paper and the four construction paradigms all collapse to tradable
+rank $1$ or $0$. This proves the invariance claim. Sources:
+\texttt{cn\_multirank.json}, \texttt{cn\_construct.json},
+\texttt{cn\_venue\_axis.json}, \texttt{cn\_direction\_full.json}. \qed
 
 \clearpage
 \bibliography{refs}

@@ -1,0 +1,123 @@
+{
+  "n_disc": 94,
+  "alts": [
+    "vw",
+    "nyse",
+    "me20"
+  ],
+  "dir_persist_w1": 0.9845795587796202,
+  "dir_persist_w2": 0.9787437647544825,
+  "dir_persist_w3": 0.9691528490468218,
+  "load_persist_eps_w1": 0.2650153587471139,
+  "load_persist_a_w1": 0.26501535874711385,
+  "load_persist_eps_w2": -0.13579295212875364,
+  "load_persist_a_w2": -0.13579295212875364,
+  "load_persist_eps_w3": 0.02172423399678256,
+  "load_persist_a_w3": 0.02172423399678258,
+  "dir_persist": 0.9787437647544825,
+  "load_persist_a": -0.13579295212875364,
+  "eig_shares": [
+    0.7254312231608249,
+    0.1782381552697455,
+    0.09633062156942962
+  ],
+  "router_w2_SR": 1.0295588762892443,
+  "router_w2_coarse_SR": 1.302433790399738,
+  "router_w2_dist": {
+    "wide": 47,
+    "me20": 23,
+    "vw": 24
+  },
+  "w2_components": {
+    "vw": -0.6321030909663933,
+    "nyse": 0.47644412986321294,
+    "me20": 0.6111028338255499
+  },
+  "assumption3": {
+    "lambda_norm_u2": 0.06665124290542813,
+    "Delta_op": 0.1755688467546767,
+    "Delta_trace": 0.24201997535988873,
+    "op_over_lambda": 2.6341421270086807,
+    "trace_over_lambda": 3.6311397178788156,
+    "premise_o_lambda_holds": false,
+    "note": "Delta_op/lambda measures how far the idiosyncratic spread is below the common-tilt power; a value near or above 1 means the o(lambda) premise is only approximate and Lemma 1 carries an O(Delta_op/lambda) correction to q^2."
+  },
+  "timevarying_w2": {
+    "n_windows": 91,
+    "window_months": 60,
+    "step_months": 12,
+    "short_horizon_dir_persist_mean": 0.9641535498658764,
+    "short_horizon_dir_persist_median": 0.9888926636617144,
+    "half_sample_dir_persist": 0.27,
+    "drifts": true,
+    "note": "short-horizon alignment uses |cos| so chance ~ 0.5 for V-1=3; a value not far above chance means the second axis is noise, not a drifting-but-real direction."
+  },
+  "tau_factors": {
+    "top_factors": [
+      "PctAcc",
+      "CompEquIss",
+      "IndMom",
+      "HerfAsset",
+      "BPEBM",
+      "RoE",
+      "DelCOL",
+      "cfp"
+    ],
+    "family_mix": {
+      "accruals": 1,
+      "payout": 2,
+      "momentum": 1,
+      "competition": 1,
+      "value": 2,
+      "profitability": 1
+    },
+    "characteristics": {
+      "PctAcc": {
+        "ann_vol_pct": 10.029989263932015,
+        "ar1": -0.12408356864649128,
+        "family": "accruals"
+      },
+      "CompEquIss": {
+        "ann_vol_pct": 9.239788900178274,
+        "ar1": 0.006734069064692656,
+        "family": "payout"
+      },
+      "IndMom": {
+        "ann_vol_pct": 10.259954393970974,
+        "ar1": 0.10415763874895775,
+        "family": "momentum"
+      },
+      "HerfAsset": {
+        "ann_vol_pct": 5.203286946094416,
+        "ar1": 0.15155289073429634,
+        "family": "competition"
+      },
+      "BPEBM": {
+        "ann_vol_pct": 5.093883190067852,
+        "ar1": 0.0518353055609831,
+        "family": "value"
+      },
+      "RoE": {
+        "ann_vol_pct": 8.243386665228133,
+        "ar1": 0.12725779071213716,
+        "family": "profitability"
+      },
+      "DelCOL": {
+        "ann_vol_pct": 6.018726102964555,
+        "ar1": 0.012962458686800236,
+        "family": "payout"
+      },
+      "cfp": {
+        "ann_vol_pct": 10.127530692697457,
+        "ar1": -0.053896811517347695,
+        "family": "value"
+      }
+    },
+    "note": "tau_i here is a per-factor single-rank SNR proxy; a shared family or characteristic among the high-tau set would be a screenable signature of routable factors."
+  },
+  "coarse_SR": 1.302433790399738,
+  "gate1_load_persist_gt_0p5": false,
+  "gate2_router_beats_coarse": false,
+  "gates_passed": 0,
+  "verdict": "tradable rank = 1 confirmed on the load axis too"
+}

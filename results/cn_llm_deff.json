@@ -1,0 +1,155 @@
+{
+  "idea": "universal hurdle sqrt(2 log N) over-penalizes a redundant LLM zoo whose effective dimension d_eff << N; signals with true t between sqrt(2 log d_eff) and sqrt(2 log N) are wrongly killed, and that band widens as the factory scales N up.",
+  "hurdle_grid_vs_N": [
+    {
+      "N": 100,
+      "kappa_naive": 3.034854258770293,
+      "d_eff_fixed20": {
+        "d_eff": 20,
+        "kappa_naive": 3.034854258770293,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.5127242323655608,
+        "frac_killed_honest": 0.2892053049760435,
+        "frac_wrongly_killed": 0.22351892738951723
+      },
+      "d_eff_sqrtN": {
+        "d_eff": 2.0,
+        "kappa_naive": 3.034854258770293,
+        "kappa_honest": 1.1774100225154747,
+        "frac_killed_naive": 0.5130426075201522,
+        "frac_killed_honest": 0.03288439393180794,
+        "frac_wrongly_killed": 0.48015821358834426
+      }
+    },
+    {
+      "N": 500,
+      "kappa_naive": 3.525509352823274,
+      "d_eff_fixed20": {
+        "d_eff": 20,
+        "kappa_naive": 3.525509352823274,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.7009021547580904,
+        "frac_killed_honest": 0.28978091957705865,
+        "frac_wrongly_killed": 0.4111212351810317
+      },
+      "d_eff_sqrtN": {
+        "d_eff": 4.5,
+        "kappa_naive": 3.525509352823274,
+        "kappa_honest": 1.7308183826022854,
+        "frac_killed_naive": 0.6996666132713948,
+        "frac_killed_honest": 0.10081694765928477,
+        "frac_wrongly_killed": 0.5988496656121101
+      }
+    },
+    {
+      "N": 1000,
+      "kappa_naive": 3.7169221888498383,
+      "d_eff_fixed20": {
+        "d_eff": 20,
+        "kappa_naive": 3.7169221888498383,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.7635169302712148,
+        "frac_killed_honest": 0.2902403733020913,
+        "frac_wrongly_killed": 0.4732765569691235
+      },
+      "d_eff_sqrtN": {
+        "d_eff": 6.3,
+        "kappa_naive": 3.7169221888498383,
+        "kappa_honest": 1.9206455826398414,
+        "frac_killed_naive": 0.7633983328744148,
+        "frac_killed_honest": 0.13944278955668477,
+        "frac_wrongly_killed": 0.6239555433177301
+      }
+    },
+    {
+      "N": 5000,
+      "kappa_naive": 4.12727348049926,
+      "d_eff_fixed20": {
+        "d_eff": 20,
+        "kappa_naive": 4.12727348049926,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.8699570428670131,
+        "frac_killed_honest": 0.2880731372725725,
+        "frac_wrongly_killed": 0.5818839055944407
+      },
+      "d_eff_sqrtN": {
+        "d_eff": 14.1,
+        "kappa_naive": 4.12727348049926,
+        "kappa_honest": 2.301807413001365,
+        "frac_killed_naive": 0.8702227784730914,
+        "frac_killed_honest": 0.2426683354192741,
+        "frac_wrongly_killed": 0.6275544430538172
+      }
+    },
+    {
+      "N": 10000,
+      "kappa_naive": 4.291932052578694,
+      "d_eff_fixed20": {
+        "d_eff": 20,
+        "kappa_naive": 4.291932052578694,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.9012447052461873,
+        "frac_killed_honest": 0.29003234431170705,
+        "frac_wrongly_killed": 0.6112123609344802
+      },
+      "d_eff_sqrtN": {
+        "d_eff": 20.0,
+        "kappa_naive": 4.291932052578694,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.902565052597848,
+        "frac_killed_honest": 0.28844449562644264,
+        "frac_wrongly_killed": 0.6141205569714054
+      }
+    },
+    {
+      "N": 50000,
+      "kappa_naive": 4.651833678112381,
+      "d_eff_fixed20": {
+        "d_eff": 20,
+        "kappa_naive": 4.651833678112381,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.9504175260828645,
+        "frac_killed_honest": 0.2885485711997116,
+        "frac_wrongly_killed": 0.6618689548831529
+      },
+      "d_eff_sqrtN": {
+        "d_eff": 44.7,
+        "kappa_naive": 4.651833678112381,
+        "kappa_honest": 2.7569734238004693,
+        "frac_killed_naive": 0.9509593815093735,
+        "frac_killed_honest": 0.4049931901938792,
+        "frac_wrongly_killed": 0.5459661913154943
+      }
+    },
+    {
+      "N": 100000,
+      "kappa_naive": 4.798525912188081,
+      "d_eff_fixed20": {
+        "d_eff": 20,
+        "kappa_naive": 4.798525912188081,
+        "kappa_honest": 2.4477468306808166,
+        "frac_killed_naive": 0.9643690243780347,
+        "frac_killed_honest": 0.2904239875857236,
+        "frac_wrongly_killed": 0.6739450367923112
+      },
+      "d_eff_sqrtN": {
+        "d_eff": 63.2,
+        "kappa_naive": 4.798525912188081,
+        "kappa_honest": 2.879939172986476,
+        "frac_killed_naive": 0.9636338149449801,
+        "frac_killed_honest": 0.4515985301332692,
+        "frac_wrongly_killed": 0.5120352848117109
+      }
+    }
+  ],
+  "empirical_local_llm": {
+    "N": 6960,
+    "d_eff": 16.838126501755003,
+    "kappa_naive": 4.206645873692832,
+    "kappa_honest": 2.376403059146414,
+    "frac_killed_naive": 0.8857109952782243,
+    "frac_killed_honest": 0.2677141698337114,
+    "frac_wrongly_killed": 0.617996825444513
+  },
+  "takeaway": "The over-hurdle (kappa_naive - kappa_honest) and the fraction of genuine signals it kills grow monotonically with the size of the factory, holding the true signal space fixed. The LLM era mechanically manufactures discarded-but-real factors."
+}
